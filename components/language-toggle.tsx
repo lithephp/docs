@@ -19,7 +19,7 @@ export function LanguageToggle() {
     if (lang === "en") {
       window.location.href = "https://lithecore.vercel.app";
     } else if (lang === "pt") {
-      window.location.href = "https://pt.lithecore.vercel.app";
+      window.location.href = "https://pt-lithecore.vercel.app";
     }
   };
 

@@ -1,0 +1,65 @@
+---
+title: Creating an Application
+description: Learn how to create your first application with Lithe.
+---
+
+## Instantiating the Application
+
+To start developing with Lithe, create a new instance of the `Lithe\App` class in the `src/App.php` file and define a route:
+
+```php
+$app = new \Lithe\App;
+
+$app->get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+```
+
+The `App` class is the main interface for configuring and managing your Lithe application. It centralizes the application's configuration and management, making it easy to create and organize your web application efficiently.
+
+---
+
+## Running the Application
+
+To make your application work, you need to call the `listen` method:
+
+```php
+$app = new \Lithe\App;
+
+$app->get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+
+$app->listen(); 
+```
+
+The `listen` method is responsible for starting the application and listening for incoming requests. After configuring all routes and registering the necessary resources, calling `listen` makes the application start processing and responding to client requests.
+
+---
+
+## Serving the Application
+
+### Using the Built-in Server
+
+To test your application locally, you need to have PHP installed on your system. With PHP installed, run the built-in server using the following command:
+
+```bash
+php line serve
+```
+
+This will start the server on the default port `8000`. If you want to specify a different port, you can use the optional `PORT` parameter. For example, to start the server on port `9000`, use:
+
+```bash
+php line serve 9000
+```
+
+Access `http://localhost:9000/` in your browser to view your application in action.
+
+### Using Apache or Another Web Server
+
+If you prefer to use Apache or another web server, the `public` directory is the entry point. Depending on your server configuration, you can access your application through URLs such as:
+
+- **Local Development Environment (Example):** `http://localhost/your-project/public/`
+- **Production Environment (Example):** `http://your-domain.com/`
+
+Make sure to adjust the access path based on your specific environment and web server configuration.

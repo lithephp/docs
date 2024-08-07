@@ -1,0 +1,128 @@
+---
+title: File Upload  
+description: "The `Request` object in Lithe allows you to access and manipulate files sent with the HTTP request, facilitating the movement of files to specific directories, validation of allowed extensions, and retrieval of information about uploaded files."
+---
+
+## Handling File Uploads
+
+In Lithe, you can handle file uploads by accessing the request instance and processing the sent files. Below, see how to set up file uploads and how to process them in your application.
+
+### Configuring the HTML Form for Upload
+
+To upload files via HTTP, the HTML form must use the `enctype="multipart/form-data"` attribute. Here's a basic example of how to create a form for file uploads:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+</head>
+<body>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Upload</button>
+    </form>
+</body>
+</html>
+```
+
+### Accessing Uploaded Files
+
+To access an uploaded file with the HTTP request in Lithe, you can use the `file` method of the `Request` instance. This method returns an instance of the `\Lithe\Component\Upload` class, which can be used to manipulate the file.
+
+```php
+$app->post('/upload', function ($req, $res) {
+    $file = $req->file('file');
+
+    if ($file !== null) {
+        // Operations with the file
+    }
+});
+```
+
+Here, `'file'` should be replaced with the name of the file input field in the HTML form.
+
+### Accessing All Uploaded Files
+
+In addition to accessing a single file using the `file` method, you can use the `files` property to get an object that contains all the information about the uploaded files. This method is useful when you need to process multiple files at the same time.
+
+```php
+$app->post('/upload', function ($req, $res) {
+    $files = $req->files;
+
+    // Example of how to access a specific file
+    $file = $files->file;
+
+    // Iterate over the properties of the object, each being an uploaded file
+    foreach ($files as $key => $file) {
+        if ($file !== null) {
+            // Operations with each file
+        }
+    }
+});
+```
+
+### Moving the File to a Directory
+
+To move an uploaded file to a specific directory and generate a unique file name, use the `move` method of the `Upload` class. This method also allows you to validate the file extension if a list of allowed extensions is provided.
+
+```php
+$filePath = $file->move('/path/to/upload/dir', ['jpg', 'png', 'pdf']);
+if ($filePath !== null) {
+    $res->send("File moved successfully: " . $filePath);
+}
+```
+
+### File Information
+
+#### Checking if the File Was Uploaded
+
+Use the `isUploaded` method to check if the file was uploaded correctly:
+
+```php
+if ($file->isUploaded()) {
+    // File uploaded successfully.
+}
+```
+
+#### Retrieving the MIME Type
+
+To get the MIME type of the uploaded file, use the `getMimeType` method:
+
+```php
+$mimeType = $file->getMimeType();
+```
+
+The `getMimeType()` method returns a string representing the MIME type of the uploaded file. MIME type (Multipurpose Internet Mail Extensions) is an internet standard used to indicate the type of content of a file. It helps to identify the format of the file, allowing applications to process it correctly.
+
+For example, here are some common MIME types that might be returned by this method:
+
+- For a JPEG image: `image/jpeg`
+- For a PNG image: `image/png`
+- For a PDF document: `application/pdf`
+- For a text file: `text/plain`
+
+These MIME types are useful for validating and manipulating files based on the content they contain.
+
+#### Retrieving the File Size
+
+To get the file size in bytes, use the `getSize` method:
+
+```php
+$fileSize = $file->getSize();
+```
+
+This allows you to check and handle the file size as needed, such as ensuring that the file does not exceed a specific size limit.
+
+### Error Handling
+
+If an error occurs during the upload process, the `Upload` class throws an exception. It is recommended to catch these exceptions to handle errors appropriately:
+
+```php
+try {
+    $filePath = $file->move('/path/to/upload/dir');
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```

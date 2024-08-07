@@ -1,0 +1,295 @@
+---
+title: "Routing"
+description: "In Lithe, you can define routes to control how your application responds to client requests using URIs (paths) and HTTP methods such as GET, POST, among others. Lithe offers flexibility and simplicity for defining and organizing your routes. Easily customize your application's behavior by connecting routes to specific functions or controllers to handle requests efficiently."
+---
+
+## Defining Routes
+
+In Lithe, you define how your application responds to client requests for specific endpoints using URIs (paths) and HTTP methods such as GET, POST, among others. Methods like `$app->get()` are used to handle GET requests, `$app->post()` for POST, and `$app->use()` for applying middleware, which are callback functions for additional request handling.
+
+These methods specify callback functions, also known as "handlers," that are triggered when the application receives a request for the defined route and HTTP method. Each route in Lithe can have one or more handler functions, which are executed when the route is matched. It is important to use `$next()` to pass control to the next callback function, especially when multiple functions are defined.
+
+To define routes in Lithe, use the following structure:
+
+```php
+$app->METHOD($PATH, $HANDLER);
+```
+
+Where: 
+    - `$app` is an instance of the `Lithe\App` class.
+    - `METHOD` is the HTTP method (in lowercase) such as `get`, `post`, etc.
+    - `$PATH` is the URL path that triggers the function.
+    - `$HANDLER` is the function executed when the route is matched.
+
+Here is a simple example of a route in Lithe:
+
+```php {3,4,5}
+$app = new \Lithe\App;
+
+$app->get('/', function ($req, $res) {
+    return $res->send('Hello World!');
+});
+
+$app->listen(); 
+```
+
+In this example, we define a route that responds with "Hello World!" when a GET request is made to the home page.
+
+---
+
+## Route Methods
+
+A route method is derived from one of the HTTP methods and is attached to an instance of the Lithe `App` class.
+
+The following code is an example of routes defined at the root of the application.
+
+```php
+// Defining a GET route
+$app->get('/', function ($req, $res) {
+    return $res->send('Hello World!');
+});
+
+// Defining a POST route
+$app->post('/', function ($req, $res) {
+    return $res->send('Got a POST request');
+});
+
+// Defining a PUT route
+$app->put('/user', function ($req, $res) {
+    return $res->send('Got a PUT request at /user');
+});
+
+// Defining a DELETE route
+$app->delete('/user', function ($req, $res) {
+    return $res->send('Got a DELETE request at /user');
+});
+```
+
+In this example, we define routes for HTTP methods GET, POST, PUT, and DELETE. Each route has a specific path (`$PATH`) and a handler (`$HANDLER`), which is a function that receives a request (`Request`) and a response (`Response`).
+
+### Available Route Methods
+
+Lithe allows you to register routes that respond to any HTTP verb:
+
+```php
+$app->get($path, $handler);
+$app->post($path, $handler);
+$app->put($path, $handler);
+$app->delete($path, $handler);
+$app->patch($path, $handler);
+$app->options($path, $handler);
+$app->head($path, $handler);
+```
+
+Sometimes you may need to register a route that responds to multiple HTTP verbs. You can do this using the `match` method. Or, you can even register a route that responds to all HTTP verbs using the `any` method:
+
+```php
+$app->match(['get', 'post'], '/', function ($req, $res) {
+    // ...
+});
+ 
+$app->any('/', function ($req, $res) {
+    // ...
+});
+```
+
+---
+
+## Defining Parameters in Routes
+
+Route parameters are parts of the URL with specific names and are used to capture values. These captured values are placed in the `params` property of a `Request` instance, where each route parameter name becomes a key with its respective value.
+```
+Route path: /users/:userId/books/:bookId
+Request URL: http://localhost:8000/users/34/books/8989
+$req->params: { "userId": "34", "bookId": "8989" }
+```
+
+### Simple Parameter
+To define routes with route parameters, simply specify the route parameters in the route path as shown below.
+
+```php
+$app->get('/users/:userId/books/:bookId', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+> The names of route parameters should consist of “word characters” ([A-Za-z0-9_]).
+
+### Typed Parameters
+
+#### Defining Typed Parameters
+
+You can define typed parameters to ensure that values meet specific criteria.
+
+```php
+$app->get('/user/:id=int', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+In the example above, the `id` parameter must be an integer (`int`). If the received request does not match the route pattern constraints, an HTTP 404 response will be returned.
+
+Parameter data types are automatically converted behind the scenes, ensuring that the parameter value is of the specified type.
+
+#### Using the `|` Operator for Optional Types
+
+You can also use the `|` operator to define optional types in route parameters, allowing for different types or formats.
+
+```php
+$app->get('/user/:identifier=int|username', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+In the example above, `:identifier` can be an integer (`int`) or a username that matches (`[a-zA-Z0-9_]{3,16}`).
+
+#### Parameters with Regular Expressions
+
+To have more control over the exact string that can be matched by a route parameter, you can use regular expressions with the generic `regex` type.
+
+```php
+$app->get('/user/:name=regex<[a-z]+>', function ($req, $res) {
+    $res->send($req->params);
+});
+```
+
+In this example, the `name` parameter must meet the regular expression `[a-z]+`, which matches a sequence of lowercase letters.
+
+This approach provides greater flexibility and control in defining routes, ensuring that parameters meet specific criteria.
+
+#### Parameter Types
+
+Here is the equivalence of parameter types listed with their corresponding regular expressions:
+
+- **int**: `[0-9]+` (one or more numeric digits)
+- **string**: `[^/]+` (one or more characters that are not a slash `/`)
+- **uuid**: `[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}` (UUID in standard format)
+- **date**: `\d{4}\-\d{1,2}\-\d{1,2}` (date in YYYY-MM-DD format)
+- **email**: `[^\s@]+@[^\s@]+\.[^\s@]+` (valid email address)
+- **bool**: `(false|true|0|1)` (boolean values: false, true, 0, or 1)
+- **float**: `[-+]?[0-9]*\.?[0-9]+` (floating-point number)
+- **slug**: `[a-z0-9]+(?:-[a-z0-9]+)*` (valid slug, used in URLs)
+- **username**: `[a-zA-Z0-9_]{3,16}` (username with letters, numbers, and `_`, between 3 and 16 characters)
+- **tel**: `\+?[\d\-\(\)]+` (phone number, optionally starting with `+` and containing digits, dashes, and parentheses)
+- **alphanumeric**: `[a-zA-Z0-9]+` (alphanumeric string, letters and numbers)
+- **regex\<Pattern\>**: Any valid regular expression you want to apply as a filter for the parameter. For example, `regex<(true|false)>` to accept only `true` or `false`.
+
+These regular expressions are used to validate and capture parameters in routes, ensuring that they match the expected criteria. If a parameter does not match the specified pattern for its type, it may result in a 404 error.
+
+---
+
+## Route Handlers
+
+You can provide multiple callback functions that act as middleware to handle a request. The only exception is that these callbacks can invoke `$next()` to call the remaining route callbacks. You can use this mechanism to enforce preconditions on a route and then pass control to subsequent routes if there is no reason to continue with the current route.
+
+Route handlers can be in the form of a function, a callable array, or combinations of both, as shown in the following examples.
+
+A single callback function can handle a route. For example:
+
+```php
+$app->get('/example/a', function ($req, $res) {
+  $res->send('Hello from A!');
+});
+```
+
+More than one callback function can handle a route (be sure to specify `$next` as the third parameter and call it to invoke the next function in the [pipeline](https://en.wikipedia.org/wiki/Pipeline_(software)) of middleware or controller). For example:
+
+```php
+$app->get('/example/b', function ($req, $res, $next) {
+  error_log('The response will be sent by the next function ...');
+  $next();
+}, function ($req, $res) {
+  $res->send('Hello from B!');
+});
+```
+
+A callable array can handle a route. For example:
+
+```php
+class UserController
+{
+    public static function index($req, $res) {
+        return $res->view('users.index');
+    }
+}
+
+$app->get('/user', [UserController::class, 'index']);
+```
+
+A combination of independent functions and callable arrays can handle a route. For example:
+
+```php
+$app->get('/user', function ($req, $res, $next) {
+  error_log('The response will be sent by the next function ...');
+  $next();
+}, [UserController::class, 'index']);
+```
+
+---
+
+## Chainable Route Handlers
+
+You can also create chainable route handlers for a route path using the `route` method. Since the path is specified in a single place, creating modular routes is useful for reducing redundancies and typos. For more information on routes, refer to the [Router class documentation](/reference/lithe/router).
+
+Here is an example of chainable route handlers defined using the `route` method:
+
+```php
+$app->route('/book')
+  ->get(function ($req, $res) {
+    $res->send('Get a random book');
+  })
+  ->post(function ($req, $res) {
+    $res->send('Add a book');
+  })
+  ->put(function ($req, $res) {
+    $res->send('Update the book');
+  });
+```
+
+---
+
+## The `Lithe\Http\Router` Class
+
+Use the `Router` class from Lithe to create modular and mountable route handlers. An instance of `Router` is a complete system of middleware and routing; for this reason, it is often referred to as a "mini-application."
+
+The following example creates a router as a module, loads a middleware function into it, defines some routes, and mounts the router module on a path in the main application.
+
+Create a router file named `birds.php` in the application directory (`src`), with the following content:
+
+```php:src/birds.php
+<?php 
+
+$router = new \Lithe\Http\Router;
+
+// Middleware specific to this router
+$timeLog = function ($req, $res, $next) {
+    echo 'Time: ' . date('Y-m-d');
+    $next();
+};
+
+$router->use($timeLog);
+
+// Define the homepage route
+$router->get('/', function ($req, $res) {
+    $res->send('Birds homepage');
+});
+
+// Define the about route
+$router->get('/about', function ($req, $res) {
+    $res->send('About birds');
+});
+
+return $router;
+```
+
+Then, load the router module into the application:
+
+```php:src/App.php
+$birds = require(__DIR__ . '/birds.php');
+
+// ...
+
+$app->use('/birds', $birds);
+```
+
+The application will now be able to handle requests to `/birds` and `/birds/about`, as well as invoke the `$timeLog` middleware function, which is specific to the route.

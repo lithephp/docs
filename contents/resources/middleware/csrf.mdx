@@ -1,0 +1,99 @@
+---
+title: CSRF  
+description: The CSRF (Cross-Site Request Forgery) middleware in Lithe protects your application from attacks that attempt to perform actions on behalf of the user without their authorization.  
+---
+
+## Using the CSRF Middleware
+
+The CSRF middleware in Lithe is designed to protect your application from cross-site request forgery attacks. To configure it, add it to your application using the `use()` method on a Lithe application instance and provide an array of settings:
+
+```php
+use Lithe\Middleware\Security\csrf;
+
+$app->use(csrf([
+    'expire' => 600,
+]));
+```
+
+This ensures that all requests that alter the application's state (such as POST, PUT, DELETE) contain a valid CSRF token, as configured.
+
+### Middleware Settings
+
+The CSRF middleware can be configured with the following parameters in an array:
+
+- **name** (string): The name of the CSRF token. Default is `_token`.
+- **expire** (int): The expiration time of the token in seconds. Default is 600 seconds.
+- **checkBody** (bool): Indicates if the token should be checked in the request body. Default is `false`.
+- **bodyMethods** (array): HTTP methods for which the token validation should be applied if the `checkBody` setting is enabled. Default is `['POST']`.
+- **regenerate** (bool): Indicates if the token should be regenerated on each request. Default is `false`.
+
+```php
+$app->use(csrf([
+    'name' => '_token',
+    'expire' => 600,
+    'checkBody' => true,
+    'bodyMethods' => ['POST', 'PUT', 'DELETE'],
+    'regenerate' => true,
+]));
+```
+
+### Generating and Obtaining CSRF Tokens
+
+The CSRF middleware generates a unique token for each session. You can generate and obtain the token using the following methods:
+
+- **generateToken(bool $force = false): string**  
+  Generates a new CSRF token and stores it in the session. If `$force` is `true`, a new token will be generated even if one already exists.
+
+  ```php
+  $token = $req->csrf->generateToken();
+  ```
+
+- **getToken(): string**  
+  Returns the current CSRF token stored in the session.
+
+  ```php
+  $token = $req->csrf->getToken();
+  ```
+
+### Including the CSRF Token in Forms
+
+To include the CSRF token in HTML forms, use the `getTokenField()` method to generate a hidden field with the token:
+
+```php
+echo $req->csrf->getTokenField();
+```
+
+### Verifying CSRF Tokens
+
+The middleware automatically checks the token in POST requests and other methods specified in `bodyMethods` when the `checkBody` option is enabled. If the token is invalid or missing, an HTTP 419 exception will be thrown. If `checkBody` is disabled, you can use the following methods to check the validity of the token:
+
+- **verifyToken(string $token, bool $checkBody = false): bool**  
+  Checks if the provided CSRF token is valid. If `$checkBody` is `true`, it checks the token in the request body; otherwise, it checks in the session.
+
+  ```php
+  $isValid = $req->csrf->verifyToken($token);
+  ```
+
+### Token Manipulation Functions
+
+- **invalidate(): void**  
+  Destroys the CSRF token and its associated session variable, invalidating it.
+
+  ```php
+  $req->csrf->invalidate();
+  ```
+
+- **exists(): bool**  
+  Checks if a CSRF token exists in the session.
+
+  ```php
+  $exists = $req->csrf->exists();
+  ```
+
+## Considerations
+
+- **Security**: Ensure that the CSRF token is included in all forms that submit modifiable data and in AJAX requests to prevent CSRF attacks. Proper validation and inclusion of the token are essential for adequate protection.
+- **Token Expiration**: Configure the token expiration time carefully to balance security and usability. Expired tokens are regenerated to avoid authentication issues.
+- **Body Verification**: If `checkBody` is enabled, the token will be checked in both headers and the request body. This is useful for APIs that receive tokens via POST, PUT, or DELETE but may add extra overhead.
+- **Token Regeneration**: When `regenerate` is enabled, a new token is generated with each request. This can enhance security but should be used cautiously to avoid impacting user experience.
+- **Error Handling**: Be prepared to handle HTTP 419 exceptions thrown when the CSRF token is invalid or missing. This may include redirecting to an error page or displaying an appropriate message to the user. For more information on handling HTTP exceptions, refer to the [HTTP Exceptions documentation](/docs/digging-deep/http-exceptions).

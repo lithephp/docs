@@ -1,0 +1,290 @@
+---
+title: HTTP Requests
+description: "The `Request` object in Lithe provides an object-oriented way to interact with the current HTTP request being handled by your application, as well as to retrieve inputs, cookies, and files submitted with the request."
+---
+
+## Interacting with the HTTP Request
+
+### Accessing the Request
+
+To interact with the current HTTP request in Lithe, you should access it through the first parameter in your route handlers. Lithe automatically passes the request instance to this parameter, allowing access to the request data.
+
+```php
+$app->get('/', function ($req) {
+    $name = $req->input('name');
+
+    // ...
+});
+```
+
+You can also specify the `Lithe\Contracts\Http\Request` interface as the type in the route closure.
+
+```php
+use Lithe\Contracts\Http\Request;
+
+$app->get('/', function (Request $req) {
+    // ...
+});
+```
+
+### Request Path and Method
+
+The `Request` instance provides a variety of methods to examine the received HTTP request.
+
+#### Getting the Request Path
+
+The `url` property returns the path information of the request. So, if the received request is directed to http://example.com/foo/bar, the `url` property will return foo/bar:
+
+```php
+$uri = $req->url;
+```
+
+#### Checking the Request Path
+
+The `is` method allows you to check if the request path matches a specific pattern. You can use the `*` character as a wildcard with this method:
+
+```php
+if ($req->is('admin/*')) {
+    // ...
+}
+```
+
+#### Getting the Request Method
+
+The `method` method returns the HTTP verb of the request. You can use the `isMethod` method to check if the HTTP verb matches a specific string:
+
+```php
+$method = $req->method;
+ 
+if ($req->isMethod('post')) {
+    // ...
+}
+```
+
+### Request Headers
+
+You can retrieve a request header using the `header` method of the `Request` instance. If the header is not present in the request, `null` will be returned.
+
+```php
+$value = $req->header('X-Header-Name');
+```
+
+### Request IP Address
+
+The `ip` property can be used to retrieve the IP address of the client who made the request to your application:
+
+```php
+$ipAddress = $req->ip;
+```
+
+---
+
+## Input
+
+### Retrieving Inputs
+
+#### Retrieving All Input Data
+
+You can retrieve all input data from the received request using the `body` property or the `body` method. These approaches are useful regardless of whether the request is from an HTML form, an XHR (XMLHttpRequest) request, or contains JSON data.
+
+**Using the `body` Property**
+
+```php
+$body = $req->body;
+
+$name = $body->name;
+```
+
+**Using the `body` Method**
+
+The `body` method provides a flexible way to retrieve data from the request. You can specify which parts of the request body you want to retrieve and also exclude unwanted keys. If no parameters are provided, the method returns all body data.
+
+```php
+// Retrieves all body data
+$body = $req->body();
+
+// Retrieves only the specified data
+$body = $req->body(['name', 'email']);
+
+// Retrieves all data, excluding the specified ones
+$body = $req->body(null, ['password']);
+```
+
+The `body` method accepts two optional parameters:
+- `$keys`: An array of keys to retrieve only specific parts of the body.
+- `$exclude`: An array of keys to exclude specific parts of the body.
+
+If the request body is an object, it will be converted to an array for filtering and then returned as an object again.
+
+
+#### Retrieving a Single Input Value
+
+Using some simple methods, you can access all user inputs from your `Request` instance without worrying about which HTTP verb was used for the request. Regardless of the HTTP verb used, the `input` method can be used to retrieve user inputs:
+
+```php
+$name = $req->input('name');
+```
+
+You can pass a default value as the second argument to the `input` method. This value will be returned if the requested input value is not present in the request:
+
+```php
+$name = $req->input('name', 'William');
+```
+
+Got it, I'll adjust the `query` guide to follow the same format as the `cookies` guide. Here is the updated version:
+
+#### Retrieving Query String
+
+While the `input` method and `body` property retrieve values from the entire request payload, including the query string, the `query` property returns all query string parameters, and the `query` method allows accessing a specific query string parameter.
+
+To access all query string parameters, you can use the `query` property:
+
+```php
+$queryParams = $req->query;
+```
+
+Here, `$queryParams` will be an object containing all query string parameters.
+
+**Accessing a Specific Parameter**
+
+To retrieve the value of a specific query string parameter, you can use the `query` method:
+
+```php
+$page = $req->query('page');
+```
+
+If the `'page'` parameter is not present, the returned value will be `null` by default. You can provide a default value to return if the parameter does not exist:
+
+```php
+$page = $req->query('page', 1);
+```
+
+In this example, if the `'page'` parameter is not present, `1` will be returned as the default value.
+
+---
+
+### Input Presence
+
+You can use the `has` method to determine if a value is present in the request. The `has` method returns `true` if the value is present in the request:
+
+```php
+if ($req->has('name')) {
+    // ...
+}
+```
+
+When provided with an array, the `has` method will determine if all specified values are present:
+
+```php
+if ($req->has(['name', 'email'])) {
+    // ...
+}
+```
+
+Let's correct and expand the explanation to include how to set default values and how to use filtering with regular expressions. Here is the enhanced version:
+
+---
+
+### Filtering Inputs
+
+The `filter` method allows filtering a value based on a specified type, ensuring that the data is valid and secure. Supported filter types include: `string`, `email`, `int`, `float`, `url`, `ip`, `bool`, `alnum`, `html`, `name`, `date`, `datetime`, `regex`, `username`, `password`, `phone`, `creditcard`, `json`, and `uuid`.
+
+#### Filtering a Value
+
+To filter a value, you can use the `filter` method:
+
+```php
+$email = $req->filter('email', 'email');
+```
+
+Here, the value associated with the 'email' key is filtered as an email address. If the value is not valid, the method will return `null`.
+
+#### Setting a Default Value
+
+It is possible to set a default value to be returned if the filtered value is not valid:
+
+```php
+$age = $req->filter('age', 'int', 18);
+```
+
+In this example, the value associated with the 'age' key is filtered as an integer. If the value is not a valid integer, the method will return `18` as the default value.
+
+#### Using Regular Expressions
+
+To apply a filter with regular expressions, pass the pattern as an additional argument:
+
+```php
+$username = $req->filter('username', 'regex', 'william', '/^[a-zA-Z0-9_]+$/');
+```
+
+In this case, the value associated with the 'username' key is filtered with the provided regular expression. If the value does not match the pattern, the method will return `'william'` as the default value.
+
+The `filter` method returns the filtered value if it is valid or the specified default value (or `null` if no default value is set). This helps ensure the security and integrity of data in your application.
+
+---
+
+## Cookies
+
+### Retrieving Cookies
+
+To access a specific cookie in the request, you can use the `cookie` method:
+
+```php
+$cookieValue = $req->cookie('name', 'defaultValue');
+```
+
+Here, the value of the cookie with the name `'name'` is returned. If the cookie is not present, `'defaultValue'` will be returned.
+
+### Checking for Cookie Presence
+
+To check if a specific cookie is present, you can use the `cookies` property:
+
+```php
+if ($req->cookies->exists('name')) {
+    // The cookie is present
+}
+```
+
+### Using the `cookies` Property
+
+You can also access all cookies in the request using the `cookies` property:
+
+```php
+$allCookies = $req->cookies;
+```
+
+Here, `$allCookies` will be an object containing all cookies present in the request.
+
+---
+
+## Request Checks
+
+### Checking if the Request is AJAX
+
+You can check if the request is an AJAX request using the `isAjax` method. This method is useful for differentiating between standard requests and those made with JavaScript, which often do not require a full HTML response.
+
+```php
+if ($req->isAjax()) {
+    // Code to be executed for AJAX request
+}
+```
+
+### Checking if the Request Expects JSON
+
+To check if the request expects a JSON response, use the `wantsJson` method. This is useful in APIs and endpoints that can serve both AJAX requests and standard requests.
+
+```php
+if ($req->wantsJson()) {
+    // Code to be executed for requests expecting JSON
+}
+```
+
+### Checking if the Request is Secure (HTTPS)
+
+To check if the request was made via HTTPS, use the `secure` method. Secure requests are important for protecting sensitive data during transmission.
+
+```php
+if ($req->secure()) {
+    // Code to be executed for secure (HTTPS) requests
+}
+```

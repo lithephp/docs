@@ -1,0 +1,122 @@
+---
+title: Introduction to Lithe
+description: Welcome to Lithe, a PHP framework offering simplicity, flexibility, and expressiveness for developers. Build anything from small applications to complex web platforms efficiently and effectively with Lithe.
+---
+
+## What is Lithe?
+
+Lithe is a PHP framework known for its simplicity, flexibility, and efficiency. Inspired by Express.js, Lithe is designed to help developers build web applications quickly and effectively. The name "Lithe" reflects the framework's core characteristics: flexible and agile.
+Here is a minimalist example:
+
+```php
+<?php
+use App\Models\User;
+
+$app = new \Lithe\App;
+
+$app->get('/users/:id', function ($req, $res) {
+    $id = $req->params->id;
+    $user = User::find($id);
+    
+    if (!$user) {
+        $res->status(404)->json([
+            'error' => 'User not found'
+        ]);
+    } 
+
+    $res->render('profile', compact('user'));
+});
+
+$app->listen();
+```
+
+This example demonstrates a Lithe application with a route to fetch and display a user based on the provided ID (`GET /users/:id`). If the user is not found, it returns a 404 error; otherwise, it displays the user's profile view.
+
+---
+
+## Simple and Flexible Routing
+
+In Lithe, defining routes is very straightforward. You can use methods like `get()`, `post()`, and others to create routes that respond to different types of HTTP requests:
+
+```php
+$app->get('/hello/:name', function ($req, $res) {
+    $res->send('Hello, ' . $req->params->name);
+});
+```
+
+Discover how [routing in Lithe](/docs/the-basics/routing) can simplify your development and give you full control over your application's routes.
+
+---
+
+## Powerful Middleware
+
+In Lithe, middlewares are your line of defense, allowing you to inspect, filter, and manipulate HTTP requests before they reach the final routes. Imagine adding functionalities like authentication and logging in a modular and reusable way!
+
+Here’s how easy it is to define and use middleware:
+
+```php
+// Middleware to check if the token is valid
+$EnsureTokenIsValid = function ($req, $res, $next) {
+    $token = $req->params->token;
+
+    if ($token !== 'my-secret-token') {
+        $res->send('Invalid token.');
+    }
+
+    $next();
+};
+
+// Protected route using the middleware
+$app->get('/protected/:token', $EnsureTokenIsValid, function ($req, $res) {
+    $res->send('Protected content accessed successfully!');
+});
+```
+
+Learn more about how [middlewares in Lithe](/docs/the-basics/middleware) can transform the way you develop and maintain your applications.
+
+---
+
+## Choosing a View Engine
+
+Lithe offers flexibility by allowing you to choose between various template engines, such as plain PHP, Blade, and Twig. In addition to the default engines, you can configure others to optimize the creation and rendering of dynamic interfaces.
+
+```php
+$app->set('view engine', 'blade');
+```
+
+Explore the possibilities of [view engines](/docs/the-basics/template-engines) and learn how to integrate them into your project efficiently.
+
+---
+
+## Database Integration
+
+Connecting to databases is simple with Lithe. The framework supports popular ORMs like Eloquent and native PHP drivers such as MySQLi and PDO. Configure your connections in the `.env` file and manage schema migrations easily.
+
+```
+DB_CONNECTION_METHOD=eloquent
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_NAME=lithe
+DB_USERNAME=root
+DB_PASSWORD=
+DB_SHOULD_INITIATE=true
+```
+
+Discover more about [database integration in Lithe](/docs/database/integration) and see how easy it is to manage your data.
+
+---
+
+## Database Migrations
+
+Maintain data consistency and integrity in your applications with automated migrations. With Lithe, you can create and apply migrations quickly and easily, using any ORM or database driver interface.
+
+```bash
+php line make:migration CreateUsersTable --template=eloquent
+php line migrate
+```
+
+Learn more about [migrations in Lithe](/docs/database/migrations) and make the most of this feature to develop robust and scalable applications.
+
+---
+
+With Lithe, you have a framework that combines power and simplicity, ideal for projects of all sizes and complexities. Explore the complete documentation to learn more and start building your PHP applications efficiently and structured. Get ready to revolutionize your development with Lithe!

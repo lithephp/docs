@@ -1,0 +1,115 @@
+---
+title: Validation  
+description: Lithe provides various ways to validate the data received by your application. Let's explore different methods available to ensure your data is correct before processing it.
+---
+
+## Quick Validation
+
+Lithe includes a variety of validation rules ready to use on your data.
+
+To better understand how validation works in Lithe, let's see a complete example of how to validate a form and show errors to the user. This practical guide will help you effectively validate your request data using Lithe.
+
+### Defining Routes
+
+```php
+use App\Http\Controllers\PostController;
+
+$app = new \Lithe\App;
+
+$app->route('/post/create')
+    ->get([PostController::class, 'create'])
+    ->post([PostController::class, 'store']);
+
+$app->listen(); 
+```
+
+The GET route displays a form for the user to create a new blog post, while the POST route saves the post to the database.
+
+### Creating the Controller
+
+```php
+namespace App\Http\Controllers;
+
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+
+class PostController
+{
+    /**
+     * Shows the form to create a new blog post.
+     */
+    public static function create(Request $req, Response $res)
+    {
+        return $res->view('post.create');
+    }
+
+    /**
+     * Stores a new blog post.
+     */
+    public static function store(Request $req, Response $res)
+    {
+        // Validate and store the blog post...
+    }
+}
+```
+
+### Writing the Validation Logic
+
+Now let's fill in the `store` method with the necessary logic to validate the new blog post. We will use the `validate` method available on the HTTP request object. This method requires one parameter: `$rules`, which defines the validation rules for specific fields.
+
+The `validate` method returns an object with two methods: `passed`, which returns a boolean indicating whether all data is correct according to the defined rules, and `errors`, which is an array listing the fields that failed validation along with their respective error codes.
+
+To better understand how to use the `validate` method, see the example in the `store` method:
+
+```php
+/**
+ * Stores a new blog post.
+ */
+public static function store(Request $req, Response $res)
+{
+    $validate = $req->validate([
+        'title' => 'required|max:255',
+        'body' => 'required',
+    ]);
+
+    if (!$validate->passed()) {
+        $errors = $validate->errors();
+        
+        foreach ($errors as $field => $code) {
+            switch ($code) {
+                case 1001:
+                    // Handle required field error
+                    break;
+                case 1010:
+                    // Handle max length error for 'title'
+                    break;
+                // Add more cases as needed
+            }
+        }
+    }
+
+    // Continue with storing the post if validation passes...
+
+    return $res->redirect('/posts');
+}
+```
+
+---
+
+## Available Validation Rules and Their Error Codes
+
+Here is a list of all available validation rules and their respective error codes:
+
+- **required** (error code: 1001): The field is required.
+- **email** (error code: 1002): The field must be a valid email address.
+- **url** (error code: 1003): The field must be a valid URL.
+- **ip** (error code: 1004): The field must be a valid IP address.
+- **number** (error code: 1005): The field must be a number.
+- **integer** (error code: 1006): The field must be an integer.
+- **boolean** (error code: 1007): The field must be true or false.
+- **regex:pattern** (error code: 1008): The field must match the specified regular expression `pattern`.
+- **min:length** (error code: 1009): The field must be at least `length` characters long.
+- **max:length** (error code: 1010): The field must not exceed `length` characters.
+- **range:min,max** (error code: 1011): The field must be within the range of `min` to `max`.
+- **dateFormat:format** (error code: 1012): The field must be in the date format specified by `format`.
+- **alphanumeric** (error code: 1013): The field must be alphanumeric (only letters and numbers).

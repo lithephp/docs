@@ -1,0 +1,161 @@
+---
+title: Router  
+description: 'The Router is responsible for managing routes and middlewares in a PHP application using Lithe. It allows defining routes for different HTTP methods, adding middlewares, and grouping routes.'  
+---
+
+## Description
+
+The `Router` is responsible for managing routes and middlewares in a PHP application using Lithe. It acts as a mini-application, handling only middleware and routing functions. Every Lithe application has a built-in router.
+
+You can use the router as an argument for the `use()` method of a Lithe application instance or the `use()` method of another router. The `Lithe\Http\Router` class offers methods to define routes and apply middlewares.
+
+## Methods
+
+### `get(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for GET requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->get('/home', function($req, $res) {
+      $res->send('Home Page');
+  });
+  ```
+
+### `post(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for POST requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->post('/submit', function($req, $res) {
+      $res->send('Form Submitted');
+  });
+  ```
+
+### `put(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for PUT requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->put('/update', function($req, $res) {
+      $res->send('Resource Updated');
+  });
+  ```
+
+### `delete(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for DELETE requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->delete('/delete', function($req, $res) {
+      $res->send('Resource Deleted');
+  });
+  ```
+
+### `patch(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for PATCH requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->patch('/modify', function($req, $res) {
+      $res->send('Resource Modified');
+  });
+  ```
+
+### `options(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for OPTIONS requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->options('/options', function($req, $res) {
+      $res->send('Available Options');
+  });
+  ```
+
+### `head(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for HEAD requests.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->head('/header', function($req, $res) {
+      $res->send('Header Information');
+  });
+  ```
+
+### `any(string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route that handles all HTTP methods.
+- **Parameters**:
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->any('/all-methods', function($req, $res) {
+      $res->send('Handles All Methods');
+  });
+  ```
+
+### `match(array $methods, string $path, callable|array ...$handler): void`
+
+- **Description**: Adds a route for multiple specified HTTP methods.
+- **Parameters**:
+  - **`$methods`** (array): HTTP methods that the route should handle.
+  - **`$path`** (string): The route path.
+  - **`$handler`** (callable|array): One or more handlers (callbacks) that process the request.
+
+  ```php
+  $router->match(['GET', 'POST'], '/mixed', function($req, $res) {
+      $res->send('Handles GET and POST');
+  });
+  ```
+
+### `use(string|callable|Router|array ...$middleware): void`
+
+- **Description**: Adds a middleware or router to the application.
+- **Parameters**:
+  - **`$middleware`** (string|callable|Router|array): The middlewares or routers to be added.
+
+  ```php
+  $router->use('/prefix', function($req, $res, $next) {
+      // Middleware logic
+      $next();
+  });
+  ```
+
+### `route(string $path): object`
+
+- **Description**: Creates an object to define routes with a specific prefix.
+- **Parameters**:
+  - **`$path`** (string): The route prefix.
+- **Return**:
+  - An anonymous object for defining routes with the provided prefix.
+
+  ```php
+  $router->route('/user')
+      ->get(function($req, $res) {
+          $res->send('User List');
+      })
+      ->post(function($req, $res) {
+          $res->send('Create a User');
+      });
+  ```

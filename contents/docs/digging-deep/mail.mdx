@@ -1,0 +1,145 @@
+---
+title: Mail
+description: "The `Mail` class in Lithe makes it easy to send emails. With simple configuration, you can send text or HTML emails, add attachments, and configure various aspects of sending."
+---
+
+## Configuring the Environment
+
+Before using the `Mail` class, configure the environment variables in the `.env` file at the root of your project to set up email server settings:
+
+```
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=no-reply@example.com
+MAIL_FROM_NAME=YourAppName
+```
+
+**Where:**
+
+- **`MAIL_HOST`**: SMTP server address.
+- **`MAIL_PORT`**: SMTP server port.
+- **`MAIL_USERNAME`**: Username for SMTP server authentication.
+- **`MAIL_PASSWORD`**: Password for SMTP server authentication.
+- **`MAIL_ENCRYPTION`**: Encryption method for the SMTP connection (`tls` or `ssl`).
+- **`MAIL_FROM_ADDRESS`**: Sender's email address.
+- **`MAIL_FROM_NAME`**: Sender's name.
+
+These settings are necessary for the `Mail` class to connect to the SMTP server and send emails with the appropriate configurations.
+
+---
+
+## Using `Mail`
+
+### Configuring the Email
+
+To start using the `Mail` class, set the recipient of the email and optionally include the recipient's name. This can be done with the static `to` method:
+
+```php
+use Lithe\Support\Mail;
+
+$mail = Mail::to('recipient@example.com', 'Recipient Name');
+```
+
+The `to` method sets the email recipient. The first parameter is the recipient's email address, and the second parameter is the recipient's name, which is optional.
+
+### Adding CC and BCC Recipients
+
+You can add CC (carbon copy) and BCC (blind carbon copy) recipients to the emails:
+
+- **CC (Carbon Copy)**
+
+  ```php
+  $mail->cc('cc@example.com', 'CC Name');
+  ```
+
+  The `cc` method adds a recipient as CC. This means the recipient listed in CC will receive a copy of the email.
+
+- **BCC (Blind Carbon Copy)**
+
+  ```php
+  $mail->bcc('bcc@example.com', 'BCC Name');
+  ```
+
+  The `bcc` method adds a recipient as BCC. BCC recipients are not visible to other recipients and will receive a copy of the email.
+
+### Setting the Subject
+
+After configuring the recipient, set the subject of the email using the `subject` method:
+
+```php
+$mail->subject('Email Subject');
+```
+
+The `subject` method sets the subject of the email. This is the title that will appear in the email's subject line.
+
+### Setting the Body of the Email
+
+You can choose to send the email body as plain text or HTML. Use the `text` method for plain text and `html` for HTML:
+
+- **Plain Text**
+
+  ```php
+  $mail->text('This is the body of the email in plain text.');
+  ```
+
+  The `text` method sets the body of the email in plain text format. Ideal for emails without special formatting.
+
+- **HTML**
+
+  ```php
+  $mail->html('<p>This is the body of the email in <strong>HTML</strong>.</p>');
+  ```
+
+  The `html` method sets the body of the email in HTML format, allowing for formatting and styling.
+
+### Adding Attachments
+
+To add attachments to the email, use the `attach` method. Provide the path to the file and the name of the attachment:
+
+```php
+$mail->attach('/path/to/file.pdf', 'File Name.pdf');
+```
+
+The `attach` method allows adding one or more files as attachments to the email. The first parameter is the file path, and the second is the name of the attached file.
+
+### Adding Custom Headers
+
+To add custom headers to the email, use the `addHeader` method:
+
+```php
+$mail->addHeader('X-Custom-Header', 'HeaderValue');
+```
+
+The `addHeader` method adds custom headers to the email. Custom headers can be used to include additional information or special settings in the email.
+
+### Configuring the Reply-To Address
+
+If you want to set a reply-to email address, use the `replyTo` method:
+
+```php
+$mail->replyTo('replyto@example.com', 'Reply To Name');
+```
+
+The `replyTo` method sets an email address for where replies to the email will be sent. The first parameter is the reply-to address, and the second is the associated name.
+
+### Sending the Email
+
+Finally, to send the email, use the `send` method. The method returns a boolean indicating whether the sending was successful:
+
+```php
+$sent = $mail->send();
+```
+
+The `send` method sends the configured email and returns `true` if the sending is successful or `false` if there is a failure.
+
+---
+
+## Troubleshooting
+
+If you encounter issues while sending emails:
+
+- **Check Settings**: Ensure that environment variables are correctly configured and that the SMTP server is accessible.
+- **Check Logs**: If a failure occurs, the `Mail` class will log the error, which can be viewed in the system logs.

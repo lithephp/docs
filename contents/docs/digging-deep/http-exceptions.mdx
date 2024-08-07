@@ -1,0 +1,43 @@
+---
+title: HTTP Exceptions
+description: "In Lithe, you can customize the response for specific HTTP errors using handlers. This allows you to provide specific messages and behaviors for different types of errors."
+---
+
+## Defining Custom Handlers
+
+To configure your application's response to specific HTTP errors, register handlers for the desired status codes using the `httpException` method on the Lithe application instance. This method takes two parameters: the HTTP status code (e.g., 404, 500) and a handler that receives the request and response objects as parameters. For 500 errors, there is an additional third parameter, the `exception`.
+
+```php
+// Handler for HTTP 400 (Bad Request)
+$app->httpException(400, function($req, $res) {
+    $res->send('Page not found.');
+});
+
+// Handler for HTTP 500 (Internal Server Error)
+$app->httpException(500, function($req, $res, $exception) {
+    $res->send('An internal error occurred.');
+});
+```
+
+These handlers help ensure that your users receive clear and helpful messages when something goes wrong.
+
+---
+
+## Throwing HTTP Exceptions
+
+Throwing HTTP exceptions is an effective way to generate specific error responses when your application encounters problems.
+
+```php
+use Lithe\Contracts\Http\HttpException;
+
+$app->get('/some-route', function($req, $res) {
+    // Throws an exception for error 404 (Not Found)
+    throw new HttpException(404, 'Page not found.');
+});
+```
+
+When an exception is thrown, Lithe will automatically look for a registered handler for the status code and execute the corresponding function.
+
+---
+
+Properly managing HTTP exceptions is essential for providing a consistent and informative user experience. By using Lithe's exception handlers and throwers, you can customize error responses and ensure that your users receive useful information in unexpected situations.

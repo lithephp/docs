@@ -1,0 +1,95 @@
+---
+title: Models
+description: "Models in Lithe represent the application's data access layer. They encapsulate business logic and interaction with the database, providing an abstraction for querying and manipulating data."
+---
+
+## Creating Models
+
+In Lithe, models are created using the Line `make:model` command. This command creates a model file inside the `src/models/` directory.
+
+```bash
+php line make:model ModelName --template=eloquent
+```
+
+**Where:**
+- **`ModelName`**: The name of the model to be created.
+- **`--template=Template`**: Optional. Defines the template to be used for generating the model. If not specified, the template defined in the `DB_CONNECTION_METHOD` environment variable will be used.
+
+### Model Templates
+
+Lithe supports different templates for models, adapted for various ORMs or database approaches:
+
+- **eloquent**: Template for models using the Eloquent ORM.
+- **plain**: Default template for custom or generic models.
+
+### Model File (Eloquent)
+
+When creating a model using the Eloquent template, you can follow this basic example for a user model:
+
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $table = 'users';
+
+    protected $fillable = [
+        'name', 'email',
+    ];
+
+    // Your model logic goes here
+}
+```
+
+### Model File (Plain)
+
+For models without a specific ORM, you can use the plain template and implement the model logic as needed:
+
+```php
+namespace App\Models;
+
+class User
+{
+    public $id;
+    public $name;
+    public $email;
+
+    // Your model logic goes here
+}
+```
+
+---
+
+## Automatic Model Usage
+
+In Lithe, models located in `src/models` are automatically available for use throughout the application without the need for explicit imports in your files.
+
+Suppose you have an Eloquent model `User` defined in `src/models/User.php`. You can use it directly in your routes without any manual inclusion:
+
+```php
+use App\Models\User;
+
+$app->get('/users/:id=int', function ($req, $res) {
+    $params = $req->params;
+    $id = $params->id;
+
+    // Example of using the User model with Eloquent
+    $user = User::find($id);
+
+    if (!$user) {
+        return $res->status(404)
+            ->json(['error' => 'User not found']);
+    }
+
+    // Return user data as JSON, for example
+    return $res->json($user);
+});
+```
+
+In this way, models are loaded dynamically and are ready to be used in your routes, providing a simplified and efficient integration with the database.
+
+---
+
+Models in Lithe are essential for organizing and interacting with the application's data, offering flexibility and abstraction for working with different ORMs or database logics.

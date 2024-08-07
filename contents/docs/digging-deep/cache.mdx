@@ -1,0 +1,77 @@
+---
+title: Cache
+description: "The `Cache` class in Lithe provides an efficient way to store and retrieve frequently accessed data, improving application performance by avoiding repeated operations on data that doesn't change frequently."
+---
+
+## Storing and Retrieving Cached Data
+
+### Storing Data in Cache
+
+To store data in the cache, use the `put` method. This method requires a key to identify the data, the data to be stored, the expiration time in seconds (default is 3600 seconds or 1 hour), and the serialization format (optional: `'serialize'`, `'json'`, or `'yaml'`, default is `'serialize'`).
+
+```php
+use Lithe\Support\Cache;
+
+$app->post('/store-data', function ($req, $res) {
+    $data = $req->body->data;
+    $cacheKey = 'data_key';
+    $expiry = 3600; // Expiration time in seconds (1 hour)
+    $serializationFormat = 'json'; // Serialization format
+
+    Cache::put($cacheKey, $data, $expiry, $serializationFormat);
+
+    $res->send('Data stored in cache.');
+});
+```
+
+### Retrieving Data from Cache
+
+To retrieve data from the cache, use the `get` method. It takes the key identifying the data and returns the stored data or `null` if not found or expired.
+
+```php
+use Lithe\Support\Cache;
+
+$app->get('/get-data', function ($req, $res) {
+    $cacheKey = 'data_key';
+    $data = Cache::get($cacheKey);
+
+    if (!$data) {
+        $data = 'Data not found in cache.';
+    }
+
+    $res->json(['data' => $data]);
+});
+```
+
+### Invalidating Cache Items
+
+To remove an item from the cache, use the `invalidate` method. It takes the key identifying the item to be removed.
+
+```php
+use Lithe\Support\Cache;
+
+$app->post('/invalidate-cache', function ($req, $res) {
+    $cacheKey = 'data_key';
+
+    Cache::invalidate($cacheKey);
+
+    $res->send('Cache invalidated.');
+});
+```
+
+### Retrieving Data or Executing a Callback
+
+To attempt to retrieve data from the cache or execute a callback function if the data is not found, use the `remember` method. It takes the key to identify the data, a callback function to fetch fresh data if not cached, the expiration time in seconds (default is 3600 seconds or 1 hour), and the serialization format (optional: `'serialize'`, `'json'`, or `'yaml'`, default is `'serialize'`).
+
+```php
+use Lithe\Support\Cache;
+
+$app->get('/settings', function ($req, $res) {
+    $settings = Cache::remember('app_settings', function() {
+        // Simulates fetching settings
+        return ['theme' => 'dark', 'language' => 'en'];
+    }, 3600, 'json');
+
+    $res->json($settings);
+});
+```

@@ -1,0 +1,216 @@
+---
+title: HTTP Responses
+description: "The `Response` object in Lithe provides powerful methods to handle and send HTTP responses, offering flexibility in web application development."
+---
+
+## Interacting with HTTP Responses
+
+### Accessing the Response
+
+To send HTTP responses in Lithe, you should access it through the second parameter in your route handlers. Lithe automatically passes the response instance to this parameter, allowing you to manipulate HTTP responses.
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+```
+
+You can also specify the `Lithe\Contracts\Http\Response` interface as the type in the route closure.
+
+```php
+use Lithe\Contracts\Http\Response;
+
+$app->get('/', function ($req, Response $res) {
+    $res->send('Hello World!');
+});
+```
+
+### Rendering Views
+
+Views help separate your controller/application logic from the visual part and are stored by default in the `src/views` directory. With Lithe, you can choose from various template engines to render your views, with plain PHP being the default.
+
+```html
+<!-- View stored in src/views/greeting.php -->
+
+<html>
+    <body>
+        <h1>Hello, William!</h1>
+    </body>
+</html>
+```
+
+As this view is stored in `src/views/greeting.php`, you can return it using the `render` method as follows:
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->render('greeting');
+});
+```
+
+> The `render` method in Lithe allows you to render a view using the configured template engine. To learn more about how to configure and use different template engines in Lithe, check the [Template Engines](/docs/the-basics/template-engines) section.
+
+If you prefer using the dot `.` to represent subdirectories, use the `view` method. For example, suppose we have a subdirectory `account` inside the `src/views` directory. You can render a view inside this subdirectory as follows:
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->view('account.settings');
+});
+```
+
+You can also display data passed to your views by enclosing the variable in curly braces.
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->render('greeting', ['name' => '2pac']);
+});
+```
+
+You can display the content of the variable `name` like this:
+
+```php
+<h1>Hello, <?= $name; ?></h1>
+```
+
+### Returning JSON Data
+
+To return JSON data, use the `json` method. The `json` method makes it easy to return data in JSON format as a response. It automatically sets the `Content-Type` header to `application/json` and converts the provided array to JSON:
+
+```php
+$res->json(['message' => 'Success']);
+```
+
+Use this method to return JSON responses in a practical and efficient manner.
+
+### Redirects
+
+The `redirect` method redirects the user to a specific route.
+
+```php
+$res->redirect('/home');
+```
+
+### Configuring HTTP Headers
+
+#### Setting Individual Headers
+
+You can configure HTTP headers using the `setHeader` method.
+
+```php
+$res->setHeader('Content-Type', 'application/json');
+```
+
+#### Setting Multiple Headers
+
+To set multiple headers at once, use the `setHeaders` method.
+
+```php
+$res->setHeaders([
+    'Content-Type' => 'application/json',
+    'X-My-Header' => 'value',
+]);
+```
+
+#### Configuring the `Content-Type` Header
+
+The `type` method simplifies setting the `Content-Type` header.
+
+```php
+$res->type('application/json');
+```
+
+#### Chaining Methods
+
+The `setHeader`, `setHeaders`, and `type` methods return the response object, allowing you to combine multiple operations and send the response in one line of code.
+
+```php
+$res->setHeader('Content-Type', 'application/json')
+    ->setHeader('X-Custom-Header', 'value')
+    ->type('application/json')
+    ->send(['message' => 'Hello World']);
+```
+
+In this example, headers are configured and the response is sent in a single line of code.
+
+### Handling Cookies
+
+The `cookie` and `clearCookie` methods allow you to set and remove cookies, respectively. Both return the response object, allowing method chaining.
+
+#### Setting a Cookie
+
+To set a cookie, use the `cookie` method.
+
+```php
+$res->cookie('user_id', 123);
+```
+
+To configure additional options like expiration time, path, and security, you can pass an options array as the third argument:
+
+```php
+$res->cookie('user_id', 123, [
+    'expire' => time() + 3600, // Expires in one hour
+]);
+```
+
+**Options that can be included are:**
+
+- **`expire`** (int): Expiration time of the cookie in seconds from the current time (default: 0).
+- **`path`** (string): Path on the server where the cookie will be available (default: '/').
+- **`domain`** (string): Domain for which the cookie is available (default: null).
+- **`secure`** (bool): Indicates if the cookie should be transmitted only over a secure HTTPS connection (default: false).
+- **`httponly`** (bool): When true, the cookie can only be accessed through HTTP protocol (default: true).
+
+#### Removing a Cookie
+
+To remove a cookie, use the `clearCookie` method:
+
+```php
+$res->clearCookie('user_id');
+```
+
+### Sending Files
+
+#### Displaying a File in the Browser
+
+To send a file directly to the browser, use the `file` method. This method is ideal for displaying files like images or PDFs directly in the browser.
+
+```php
+$res->file('/path/to/file.txt');
+```
+
+#### Sending a File for Download
+
+To allow the user to download a file, use the `download` method. This method sets the appropriate headers to initiate the download and allows specifying a name for the file to be downloaded.
+
+```php
+$res->download('/path/to/file.txt', 'filename.txt');
+```
+
+### Configuring HTTP Status
+
+#### Setting and Retrieving HTTP Status Code
+
+The `status` method allows you to set the HTTP status code of the response and returns the response object, enabling method chaining.
+
+```php
+$res->status(404)->json(['error' => 'Not Found']);
+```
+
+To retrieve the current HTTP status code of the response, use the `getStatusCode` method:
+
+```php
+$status = $res->getStatusCode();
+```
+
+### Finalizing the Response
+
+The response is automatically finalized when you use methods that send data to the client, such as `send`, `json`, `view`, `file`, and `download`. These methods send the headers, HTTP status, and content configured.
+
+#### Forcing Response Finalization
+
+If you want to ensure that the response is explicitly finalized, regardless of other methods, use the `end` method:
+
+```php
+$res->end();
+```
+
+The `end` method sends all headers and the configured HTTP status, ensuring that the response is finalized.

@@ -1,0 +1,70 @@
+---
+title: Log
+description: "Logging in Lithe provides an efficient and reliable way to record messages, ensuring that important events and errors are captured and stored properly to facilitate debugging and problem resolution in the system."
+---
+
+## Logging Messages
+
+Lithe automatically creates the `storage/logs` directory to store logs. Ensure that your application has the permissions to create and write files in this directory.
+
+### Informative Messages
+
+To log informative messages, use the `info` method:
+
+```php
+use Lithe\Support\Log;
+
+$app->get('/hello/:name', function ($req, $res) {
+    Log::info('Route /hello called with name: ' . $req->params->name);
+    $res->send('Hello, ' . $req->params->name);
+});
+```
+
+Informative messages help monitor the normal operation of the system and expected events.
+
+### Warning Messages
+
+To log warning messages, use the `warning` method:
+
+```php
+use Lithe\Support\Log;
+
+$app->get('/warning-route', function ($req, $res) {
+    Log::warning('Access to route /warning-route detected.');
+    $res->send('Warning recorded.');
+});
+```
+
+Warnings indicate conditions that are not errors but deserve attention.
+
+### Error Messages
+
+To log error messages, use the `error` method:
+
+```php
+use Lithe\Support\Log;
+
+$app->get('/', function ($req, $res) {
+    try {
+        // Code that may cause an error
+        throw new Exception('Intentional error for example.');
+    } catch (Exception $e) {
+        Log::error('Error on route /: ' . $e->getMessage());
+        $res->send('Error recorded.');
+    }
+});
+```
+
+Error messages are essential for identifying and fixing critical issues in the system.
+
+---
+
+## Log Storage
+
+In addition to the logs you manually write, Lithe also automatically logs when something fails in your application. The logs are stored in specific files in the `storage/logs` directory:
+
+- **`error.log`**: Critical error messages.
+- **`warning.log`**: Warning messages.
+- **`info.log`**: Informative messages.
+
+These files help keep track of what is happening in the system and facilitate debugging and monitoring.

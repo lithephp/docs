@@ -1,0 +1,1 @@
+export type RoutesType = { title: string; href: string; disabled: boolean | undefined; }[]

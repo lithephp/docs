@@ -1,0 +1,83 @@
+---
+title: Flash Messages  
+description: The Flash Messages middleware in Lithe allows you to store and retrieve temporary messages between requests.  
+---
+
+## Using the Flash Messages Middleware
+
+The Flash Messages middleware in Lithe allows you to store temporary messages in the session that can be accessed in the next request. This is useful for displaying status messages, such as confirmations or errors, after an operation.
+
+### Configuring the Flash Middleware
+
+To use the Flash Messages middleware, you must add it to your application with the `use()` method:
+
+```php
+use Lithe\Middleware\Session\flash;
+
+$app->use(flash());
+```
+
+This adds the flash message functionality to your application, allowing you to store and retrieve temporary messages.
+
+### Setting Flash Messages
+
+To set a flash message, you can use the magic method `__set` or the `set` method of the `Flash` class. Both approaches store the message in the session so that it is available in the next request.
+
+- **Using the magic method `__set`**:
+
+  ```php
+  $req->flash->successMessage = 'Operation completed successfully!';
+  ```
+
+- **Using the `set` method**:
+
+  ```php
+  $req->flash->set('successMessage', 'Operation completed successfully!');
+  ```
+
+### Retrieving Flash Messages
+
+To retrieve and remove a flash message from the session, you can use the magic method `__get` or the `get` method of the `Flash` class. These messages are removed from the session after being retrieved.
+
+- **Using the magic method `__get`**:
+
+  ```php
+  $message = $req->flash->successMessage;
+  ```
+
+- **Using the `get` method**:
+
+  ```php
+  $message = $req->flash->get('successMessage');
+  ```
+
+### Checking Flash Messages
+
+To check if one or more flash messages exist in the session, use the `has` method:
+
+- **Single check**:
+
+  ```php
+  $exists = $req->flash->has('successMessage');
+  ```
+
+- **Multiple checks**:
+
+  ```php
+  $exists = $req->flash->has(['successMessage', 'errorMessage']);
+  ```
+
+### Keeping Flash Messages
+
+If you want to keep a flash message for the next request (i.e., to make it available in more than one request), use the `keep` method:
+
+```php
+$req->flash->keep('successMessage');
+```
+
+This reconfigures the message to the next request after retrieval.
+
+## Considerations
+
+- **Persistence**: Flash messages are removed from the session after the first retrieval, unless you use the `keep` method to preserve them.
+- **Security**: Be sure to sanitize retrieved messages to avoid security issues, such as XSS attacks.

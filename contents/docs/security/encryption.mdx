@@ -1,0 +1,76 @@
+---
+title: Encryption
+description: "Lithe offers a security module called Crypt that provides methods for encrypting and decrypting data using the AES-256-CBC algorithm. AES (Advanced Encryption Standard) is widely recognized for its security and efficiency in protecting sensitive data."
+---
+
+## Configuration
+
+To use the `Crypt` module in Lithe, you must first set the `APP_KEY` environment variable in your `.env` file. This variable should be a cryptographically secure key. You can generate this key using the `php line key:generate` command, which will create a secure key for your application. The `APP_KEY` variable is essential for encryption and should be set during Lithe installation or configured manually.
+
+> **Note:** Changing the encryption key (`APP_KEY`) invalidates all previous encryptions. Data encrypted with one key cannot be decrypted if the key is changed.
+
+---
+
+## Using Crypt
+
+The `Crypt` module in Lithe provides methods for encrypting and decrypting data. Both methods use the AES-256-CBC encryption algorithm.
+
+### Encrypting a Value
+
+To encrypt data, use the `encrypt` method of the `Crypt` module. The encrypted value is returned in base64 format.
+
+```php
+use Lithe\Support\Security\Crypt;
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+
+$app = new \Lithe\App;
+
+$app->post('/account/create', function (Request $req, Response $res) {
+    // Encrypting the 'name' field from the request body
+    $encryptedName = Crypt::encrypt($req->input('name'));
+
+    // ...
+
+    // Returning the response
+    return $res->send("Data encrypted successfully!");
+});
+
+$app->listen();
+```
+
+### Decrypting a Value
+
+To decrypt data, use the `decrypt` method of the `Crypt` module. The decrypted value is returned as a string.
+
+```php
+use Lithe\Support\Security\Crypt;
+
+$decrypted = Crypt::decrypt($encryptedValue);
+```
+
+**Possible Returns:**
+
+1. **Decryption Success:** If decryption is successful, the `decrypt` method returns the decrypted data as a string.
+2. **Decryption Failure:** If decryption fails, the method will throw a `CryptException`. This may occur due to an incorrect key, invalid IV, corrupted data, or other encryption-related issues.
+
+To handle decryption failures, wrap the call to the `decrypt` method in a `try-catch` block to catch and handle exceptions.
+
+```php
+use Lithe\Support\Security\Crypt;
+use Lithe\Contracts\Encryption\CryptException;
+
+try {
+    $decrypted = Crypt::decrypt($encryptedValue);
+} catch (CryptException $e) {
+    // Handle the exception here
+    echo 'Error decrypting data: ' . $e->getMessage();
+}
+```
+
+---
+
+## Additional Notes
+
+- **Key Validation:** Ensure that the `APP_KEY` variable is a valid base64 string with 32 bytes after decoding.
+- **Key Maintenance:** Keep the `APP_KEY` secure and avoid frequent changes to ensure that encrypted data can be properly decrypted.

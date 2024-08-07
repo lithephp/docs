@@ -1,0 +1,170 @@
+---
+title: Response
+description: "The `Response` object in Lithe provides powerful methods for handling and sending HTTP responses, offering flexibility in web application development."
+---
+
+## Methods
+
+### `render(string $file, ?array $data = [])`
+  - **Description:** Renders a view using the configured view engine.
+  - **Parameters:**
+    - `file` - Name of the view file.
+    - `data` - Data to be passed to the view.
+  - **Exceptions:** Throws `\InvalidArgumentException` if the view engine is not configured correctly.
+    ```php
+    $app->get('/welcome', function($req, $res) {
+        return $res->render('welcome', ['user' => 'John Doe']);
+    });
+    ```
+
+### `getStatusCode(): ?int`
+  - **Description:** Returns the current HTTP status code of the response.
+  - **Return:** `int|null`
+    ```php
+    $app->get('/status', function($req, $res) {
+        $status = $res->getStatusCode();
+        // Example: $status might be 200
+    });
+    ```
+
+### `view(string $file, ?array $data = [])`
+  - **Description:** Renders a view. Alias for the `render` method.
+  - **Parameters:**
+    - `file` - Name of the view file.
+    - `data` - Data to be passed to the view.
+    ```php
+    $app->get('/profile', function($req, $res) {
+        return $res->view('profile', ['name' => 'Jane Doe']);
+    });
+    ```
+
+### `send(mixed $data)`
+  - **Description:** Sends a response, which can be serialized data in JSON or plain text.
+  - **Parameters:**
+    - `data` - Data to be sent as a response.
+    ```php
+    $app->get('/data', function($req, $res) {
+        return $res->send('Hello, World!');
+    });
+    ```
+
+### `redirect(string $url, bool $permanent = false)`
+  - **Description:** Redirects to a URL using an HTTP redirect.
+  - **Parameters:**
+    - `url` - URL to redirect to.
+    - `permanent` - Whether the redirect is permanent (301) or temporary (302).
+    ```php
+    $app->get('/old-page', function($req, $res) {
+        return $res->redirect('/new-page', true);
+    });
+    ```
+
+### `json(mixed $data)`
+  - **Description:** Sends a response in JSON format.
+  - **Parameters:**
+    - `data` - Data to be sent as a JSON response.
+    ```php
+    $app->get('/api/data', function($req, $res) {
+        return $res->json(['status' => 'success', 'data' => [1, 2, 3]]);
+    });
+    ```
+
+### `status(int $statusCode): self`
+  - **Description:** Sets the HTTP status code for the response.
+  - **Parameters:**
+    - `statusCode` - HTTP status code.
+  - **Return:** The current `Response` object for method chaining.
+    ```php
+    $app->get('/not-found', function($req, $res) {
+        return $res->status(404)->send('Page Not Found');
+    });
+    ```
+
+### `setHeader(string $name, ?string $value = null): self`
+  - **Description:** Sets an HTTP header in the response.
+  - **Parameters:**
+    - `name` - Name of the header.
+    - `value` - Value of the header (or `null` for headers without value).
+  - **Return:** The current `Response` object for method chaining.
+    ```php
+    $app->get('/headers', function($req, $res) {
+        return $res->setHeader('X-Custom-Header', 'Value')
+            ->send('Header set!');
+    });
+    ```
+
+### `setHeaders(array $headers): self`
+  - **Description:** Sets multiple headers at once.
+  - **Parameters:**
+    - `headers` - Associative array of headers.
+  - **Return:** The current `Response` object for method chaining.
+    ```php
+    $app->get('/headers', function($req, $res) {
+        return $res->setHeaders([
+            'X-Custom-Header' => 'Value',
+            'X-Another-Header' => 'Another Value'
+        ])->send('Headers set!');
+    });
+    ```
+
+### `download(string $file, ?string $name = null, array $headers = [])`
+  - **Description:** Sends a file for download.
+  - **Parameters:**
+    - `file` - Path to the file.
+    - `name` - Name of the file for download.
+    - `headers` - Additional headers.
+    ```php
+    $app->get('/download', function($req, $res) {
+        return $res->download('/path/to/file.zip', 'file.zip');
+    });
+    ```
+
+### `file(string $file, array $headers = [])`
+  - **Description:** Displays a file in the browser.
+  - **Parameters:**
+    - `file` - Path to the file.
+    - `headers` - Additional headers.
+    ```php
+    $app->get('/view-file', function($req, $res) {
+        return $res->file('/path/to/file.pdf');
+    });
+    ```
+
+### `cookie(string $name, $value, array $options = []): self`
+  - **Description:** Sets a new cookie.
+  - **Parameters:**
+    - `name` - Name of the cookie.
+    - `value` - Value of the cookie.
+    - `options` - Options for configuring the cookie.
+  - **Return:** The current `Response` object for method chaining.
+    ```php
+    $app->get('/set-cookie', function($req, $res) {
+        return $res->cookie('user', 'John Doe', [
+          'expires' => time() + 3600
+        ]);
+    });
+    ```
+
+### `clearCookie(string $name): self`
+  - **Description:** Removes a cookie.
+  - **Parameters:**
+    - `name` - Name of the cookie to be removed.
+  - **Return:** The current `Response` object for method chaining.
+    ```php
+    $app->get('/clear-cookie', function($req, $res) {
+        return $res->clearCookie('user');
+    });
+    ```
+
+### `type(string $mimeType): self`
+  - **Description:** Sets the MIME type for the response.
+  - **Parameters:**
+    - `mimeType` - MIME type to be set.
+  - **Return:** The current `Response` object for method chaining.
+    ```php
+    $app->get('/json', function($req, $res) {
+        return $res->type('application/json')->json([
+          'status' => 'success'
+        ]);
+    });
+    ```

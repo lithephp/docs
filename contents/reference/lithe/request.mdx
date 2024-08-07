@@ -1,0 +1,194 @@
+---
+title: Request  
+description: The `Request` object in Lithe provides an object-oriented way to interact with the current HTTP request being handled by your application, as well as to retrieve inputs, cookies, and files submitted with the request.
+---
+
+## Properties
+
+### `params`
+  - **Description:** Request parameters, such as form data or URL parameters.
+  - **Type:** `object`
+    ```php
+    $app->get('/hello/:name', function($req, $res) {
+        $params = $req->params;
+        // Example: $params may contain data like ['name' => 'John']
+    });
+    ```
+
+### `method`
+  - **Description:** HTTP method of the request (e.g., 'GET', 'POST').
+  - **Type:** `string`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $method = $req->method; // Example: $method may be 'GET'
+    });
+    ```
+
+### `headers`
+  - **Description:** Request headers.
+  - **Type:** `array`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $headers = $req->headers;
+    });
+    ```
+
+### `ip`
+  - **Description:** IP address of the client making the request.
+  - **Type:** `string`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $ip = $req->ip;
+        // Example: $ip may be '192.168.1.1'
+    });
+    ```
+
+### `query`
+  - **Description:** Data from the URL query string.
+  - **Type:** `object`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $query = $req->query;
+        // Example: $query may contain ['search' => 'Lithe']
+    });
+    ```
+
+### `url`
+  - **Description:** URL of the request.
+  - **Type:** `string`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $url = $req->url;
+        // Example: $url may be '/hello'
+    });
+    ```
+
+### `body`
+  - **Description:** Data from the body of the request.
+  - **Type:** `object|array|mixed`
+    ```php
+    $app->post('/submit', function($req, $res) {
+        $body = $req->body;
+        // Example: $body may contain ['name' => 'John']
+    });
+    ```
+
+### `files`
+  - **Description:** Files submitted with the request (if applicable).
+  - **Type:** `object|array|array[]`
+    ```php
+    $app->post('/upload', function($req, $res) {
+        $files = $req->files;
+        // Example: $files may contain information about uploaded files
+    });
+    ```
+
+### `cookies`
+  - **Description:** Cookies sent with the request.
+  - **Type:** `object`
+    ```php
+    $app->get('/hello', function($req, $res) {
+        $cookies = $req->cookies;
+        // Example: $cookies may contain ['session_id' => 'abc123']
+    });
+    ```
+
+## Methods
+
+### `__get(string $name)`
+- **Description:** Magic method to access property values dynamically.
+- **Parameters:**
+  - `name` - Property name.
+- **Return:** Property value or `null` if it does not exist.
+
+### `__set(string $name, $value)`
+- **Description:** Magic method to set property values dynamically.
+- **Parameters:**
+  - `name` - Property name.
+  - `value` - Value to be set.
+
+### `getHost()`
+- **Description:** Gets the host of the server (including the http/https scheme).
+- **Return:** `string` - Host URL.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $host = $req->getHost();
+      // Example: $host may be 'https://example.com'
+  });
+  ```
+
+### `cookie(string $name, $default = null)`
+- **Description:** Gets the value of a specific cookie.
+- **Parameters:**
+  - `name` - Name of the cookie.
+  - `default` - Default value if the cookie does not exist.
+- **Return:** Cookie value or default value.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $sessionId = $req->cookie('session_id', 'default_session');
+      // Example: $sessionId may be 'abc123' or 'default_session'
+  });
+  ```
+
+### `header(string $name, mixed $default = null): mixed`
+- **Description:** Gets the value of a specific request header.
+- **Parameters:**
+  - `name` - Name of the header.
+  - `default` - Default value if the header does not exist.
+- **Return:** Header value or default value.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $contentType = $req->header('Content-Type', 'text/plain');
+      // Example: $contentType may be 'application/json' or 'text/plain'
+  });
+  ```
+
+### `isAjax()`
+- **Description:** Checks if the request is an AJAX request.
+- **Return:** `bool` - `true` if it is an AJAX request, `false` otherwise.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      if ($req->isAjax()) {
+          // Executes code specific for AJAX requests
+      }
+  });
+  ```
+
+### `query(string $key = null, $default = null)`
+- **Description:** Gets the value of a specific query parameter.
+- **Parameters:**
+  - `key` - Parameter name.
+  - `default` - Default value if the parameter does not exist.
+- **Return:** Parameter value or default value.
+  ```php
+  $app->get('/search', function($req, $res) {
+      $searchTerm = $req->query('search', 'default');
+      // Example: $searchTerm may be 'Lithe' or 'default'
+  });
+  ```
+
+### `file(string $name = null)`
+- **Description:** Gets information about an uploaded file.
+- **Parameters:**
+  - `name` - Name of the file input.
+- **Return:** File information or `null` if no file is present.
+  ```php
+  $app->post('/upload', function($req, $res) {
+      $file = $req->file('uploaded_file');
+      // Example: $file may contain information about the uploaded file
+  });
+  ```
+
+### `filter(string $key, string $filterType, $default = null)`
+- **Description:** Filters a value based on the specified filter type.
+- **Parameters:**
+  - `key` - Key containing the value to be filtered.
+  - `filterType` - Type of filter to be applied.
+  - `default` - Default value if the filter fails or the value is not defined.
+- **Return:** Filtered value or default value.
+  ```php
+  $app->post('/submit', function($req, $res) {
+      $email = $req->filter('email', 'email', 'default@example.com');
+      // $email may be a valid email or 'default@example.com'
+  });
+  ```

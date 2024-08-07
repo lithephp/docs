@@ -1,0 +1,65 @@
+---
+title: Hashing
+description: "Lithe offers a security module called Hash with methods to create and verify hashes of sensitive data using the Bcrypt algorithm. Bcrypt is widely recognized for its security and efficiency in protecting passwords and other sensitive data."
+---
+
+## Using Hash
+
+### Creating a Hash
+
+You can create a hash from a string using the `make` method provided by Lithe's `Hash` security module. All hashes are generated using the Bcrypt algorithm.
+
+```php
+use Lithe\Contracts\Http\Request;
+use Lithe\Contracts\Http\Response;
+use Lithe\Support\Security\Hash;
+
+$app = new \Lithe\App;
+
+$app->post('/user/register', function (Request $req, Response $res) {
+    $body = $req->body;
+
+    // Creating a hash for the 'password' field from the request body
+    $hashedPassword = Hash::make($body->password);
+
+    // ...
+
+    // Returning the response
+    return $res->send("User registered successfully!");
+});
+
+$app->listen();
+```
+
+### Verifying a Hash
+
+You can verify if a string matches a hash using the `check` method provided by Lithe's `Hash` security module.
+
+```php
+use Lithe\Support\Security\Hash;
+
+$valid = Hash::check($plainPassword, $hashedPassword);
+```
+If the string matches the provided hash, the method returns `true`. Otherwise, it returns `false`.
+
+### Rehashing a Value
+
+You can check if a hash needs to be rehashed and, if so, create a new hash with a different cost using the `needsRehash` method provided by Lithe's `Hash` security module.
+
+```php
+use Lithe\Support\Security\Hash;
+
+$needsRehash = Hash::needsRehash($hashedPassword, ['cost' => 12]);
+```
+If the hash needs to be rehashed, the method returns `true`. Otherwise, it returns `false`.
+
+To handle rehashing properly, it is recommended to check if the hash needs to be rehashed and, if necessary, create a new hash and update the stored hash.
+
+```php
+use Lithe\Support\Security\Hash;
+
+if (Hash::needsRehash($hashedPassword, ['cost' => 12])) {
+    $newHashedPassword = Hash::make($plainPassword, ['cost' => 12]);
+    // Update the stored hash in the database
+}
+```

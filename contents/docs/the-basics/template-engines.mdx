@@ -1,0 +1,195 @@
+Aqui está o texto traduzido para inglês:
+
+---
+
+title: Template Engines  
+description: Lithe offers flexibility by allowing you to choose from various template engines, such as pure PHP, Blade, and Twig. In addition to the default engines, you can configure others to optimize the creation and rendering of dynamic interfaces.
+
+---
+
+## Configuring Lithe
+
+To enable Lithe to render template files, you need to configure a few options in your application. Follow these steps:
+
+### 1. Template Directory
+
+Define the directory where the template files are located.
+
+```php
+$app->set('views', __DIR__ . '/views');
+```
+
+By default, Lithe uses the `src/views` directory at the root of the application to store template files.
+
+### 2. Template Engine
+
+Configure the template engine to be used by Lithe.
+
+```php
+$app->set('view engine', 'blade');
+```
+
+Lithe is compatible with several popular template engines, such as Blade, Twig, and pure PHP. By default, Lithe uses pure PHP.
+
+### 3. Package Installation
+
+After configuring the template engine, install the corresponding Composer package for the chosen engine to ensure everything works correctly.
+
+---
+
+## Using Template Engines
+
+### Using Pure PHP
+
+To use pure PHP as the template engine:
+
+**Step 1:** Set the template engine
+
+```php
+$app->set('view engine', 'default');
+```
+
+**Step 2:** Create a PHP template file
+
+In the `src/views` directory, create `index.php` with the content:
+
+```html
+<html>
+    <body>
+        <h1>Hello, <?= $name ?></h1>
+    </body>
+</html>
+```
+
+### Using Blade
+
+To use Blade:
+
+**Step 1:** Install the package via Composer
+
+```bash
+composer require jenssegers/blade
+```
+
+**Step 2:** Set the template engine
+
+```php
+$app->set('view engine', 'blade');
+```
+
+**Step 3:** Create a Blade template file
+
+In the `src/views` directory, create `index.blade.php` with the content:
+
+```html
+<html>
+    <body>
+        <h1>Hello, {{ $name }}</h1>
+    </body>
+</html>
+```
+
+### Using Twig
+
+To use Twig:
+
+**Step 1:** Install the package via Composer
+
+```bash
+composer require twig/twig
+```
+
+**Step 2:** Set the template engine
+
+```php
+$app->set('view engine', 'twig');
+```
+
+**Step 3:** Create a Twig template file
+
+In the `src/views` directory, create `index.twig` with the content:
+
+```html
+<html>
+    <body>
+        <h1>Hello, {{ name }}</h1>
+    </body>
+</html>
+```
+
+### Rendering Templates
+
+Regardless of the template engine, use the same approach to render templates:
+
+```php
+$app->get('/', function ($req, $res) {
+  $res->view('index', ['name' => 'William']);
+});
+```
+
+To learn more about <a href="https://laravel.com/docs/blade" target="_blank">Blade</a> and <a href="https://twig.symfony.com/doc" target="_blank">Twig</a>, check the official documentation.
+
+## Custom Template Engines
+
+> Note: This section contains advanced topics. If you prefer not to learn about this now, feel free to skip this section.
+
+Use the `engine` method of the `Lithe\App` class to configure or create your own template engine.
+
+```php
+$app->engine($name, $callback);
+```
+
+Where:
+- `$name`: Name of the template engine.
+- `$callback`: Template engine configuration function (accepts the following items as parameters: the file location, options array, and the views path).
+
+The following code is an example of implementing a very simple template engine called `lithe.view`.
+
+```php
+// Defining the "lithe.view" template engine
+$app->engine('lithe.view', function ($file, $options, $views) {
+    // Read the content of the template file
+    $content = file_get_contents($views . '/' . $file . '.lithe.view');
+
+    // Replace variables
+    foreach ($options as $key => $value) {
+        $content = str_replace('{{ ' . $key . ' }}', $value, $content);
+    }
+
+    // Return the rendered content
+    echo $content;
+});
+
+// Configuring the template engine
+$app->set('view engine', 'lithe.view');
+```
+
+Your application will now be able to render `.lithe.view` files. Create a file named `index.lithe.view` in the views directory with the following content:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ message }}</h1>
+    <p>This is a .lithe.view file being rendered!</p>
+</body>
+</html>
+```
+
+Then, create the following route in your application:
+
+```php
+$app->get('/', function ($req, $res) {
+    $res->view('index', [
+        'title' => 'My Template Engine', 
+        'message' => 'Hello World'
+    ]);
+});
+```
+
+When you request the homepage, the `index.lithe.view` file will be rendered as HTML.

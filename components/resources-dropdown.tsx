@@ -36,7 +36,7 @@ export function ResourcesDropdown() {
                         href={item.href}
                     >
                         <DropdownMenuItem key={item.title + item.href}>
-                            {item.title}lithe
+                            {item.title}
                         </DropdownMenuItem>
                     </Anchor>
 

@@ -51,7 +51,7 @@ export function Navbar() {
               <ModeToggle />
               <LanguageToggle />
               <Link
-                href="https://github.com/lithecore/framework" target='_blank'
+                href="https://github.com/lithecore" target='_blank'
                 className={buttonVariants({ variant: "ghost", size: "icon" })}
               >
                 <GithubIcon className="h-[1.1rem] w-[1.1rem]" />

@@ -4,7 +4,7 @@ Welcome to the official documentation site for the Lithe framework. Lithe is a l
 
 ## Getting Started
 
-To get started with Lithe, visit our [Getting Started Guide](https://lithecore.vercel.app/docs/getting-started/introduction) where you'll find everything you need to set up your first Lithe application.
+To get started with Lithe, visit our [Getting Started Guide](https://lithecore.vercel.app/docs/get-started/introduction) where you'll find everything you need to set up your first Lithe application.
 
 ## License
 

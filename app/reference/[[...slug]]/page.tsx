@@ -50,7 +50,7 @@ export default async function ReferencesPage({
             {res.frontmatter.description}
           </p>
           {res.content}
-          <Pagination pathname={pathName} category="docs" routes={FLATTEND_REFERENCE_ROUTES} />
+          <Pagination pathname={pathName} category="reference" routes={FLATTEND_REFERENCE_ROUTES} />
         </div>
       </div>
 

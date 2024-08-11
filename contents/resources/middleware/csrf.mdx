@@ -3,6 +3,16 @@ title: CSRF
 description: The CSRF (Cross-Site Request Forgery) middleware in Lithe protects your application from attacks that attempt to perform actions on behalf of the user without their authorization.  
 ---
 
+## Installation
+
+To install the CSRF middleware for Lithe, use the Lithe Line module installation command:
+
+```bash
+php line module:install csrf
+```
+
+This command will download and install the CSRF middleware into your project.
+
 ## Using the CSRF Middleware
 
 The CSRF middleware in Lithe is designed to protect your application from cross-site request forgery attacks. To configure it, add it to your application using the `use()` method on a Lithe application instance and provide an array of settings:

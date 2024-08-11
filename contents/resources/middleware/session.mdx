@@ -3,6 +3,17 @@ title: Session
 description: The session middleware in Lithe manages user session configuration and control.  
 ---
 
+
+## Installation
+
+To install the session middleware for Lithe, use the Line module installation command:
+
+```bash
+php line module:install lithe-session
+```
+
+This command will download and install the session middleware into your project.
+
 ## Using the Session Middleware
 
 Lithe includes a session middleware to manage user sessions and their variables. To configure the middleware in your application, add it using the `use()` method:
@@ -19,7 +30,7 @@ This ensures that the session is correctly initiated and configured for all requ
 
 The session middleware can be configured with the following parameters:
 
-- **lifetime**: Defines the lifetime of the session in seconds. The default is 2592000 seconds (30 days).
+- **lifetime**: Defines the session's lifetime in seconds. The default is 2592000 seconds (30 days).
 - **domain**: Defines the domain for which the session cookie is valid. The default is `null`.
 - **secure**: Indicates if the session cookie should be sent only over secure (HTTPS) connections. The default is `false`.
 - **httponly**: Indicates if the session cookie should be accessible only through HTTP requests. The default is `true`.
@@ -123,7 +134,7 @@ After configuration, you can access and manipulate session variables through the
   $hasUser = $req->session->has('user');
   ```
 
-### Considerations
+## Considerations
 
 - **Creating the Session Directory**: The middleware ensures that the directory for storing sessions exists. If it doesn't, it will be created.
 - **Error Handling**: If an error occurs during configuration or session initialization, the middleware will log it and continue execution.

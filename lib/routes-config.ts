@@ -119,7 +119,7 @@ export const ROUTES: Array<RouteInterface> = [
 
 export const REFERENCE_ROUTES: Array<RouteInterface> = [
   {
-    title: "Lithe@1.0.0",
+    title: "Lithe@1.0",
     href: "lithe",
     items: [
       {

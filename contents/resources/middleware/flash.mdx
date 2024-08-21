@@ -3,23 +3,13 @@ title: Flash Messages
 description: The Flash Messages middleware in Lithe allows you to store and retrieve temporary messages between requests.  
 ---
 
-## Installation
-
-To install the Flash Messages middleware for Lithe, use the Lithe Line module installation command:
-
-```bash
-php line module:install flash
-```
-
-This command will download and install the Flash Messages middleware into your project.
-
 ## Using the Flash Messages Middleware
 
-The Flash Messages middleware in Lithe allows you to store temporary messages in the session that can be accessed in the next request. This is useful for displaying status messages, such as confirmations or errors, after an operation.
+The Flash Messages middleware in Lithe allows you to store temporary messages in the session, which can be accessed on the next request. This is useful for displaying status messages, such as confirmations or errors, after an operation.
 
 ### Configuring the Flash Middleware
 
-To use the Flash Messages middleware, you must add it to your application with the `use()` method:
+To use the Flash Messages middleware, you need to add it to your application using the `use()` method:
 
 ```php
 use Lithe\Middleware\Session\flash;
@@ -31,9 +21,9 @@ This adds the flash message functionality to your application, allowing you to s
 
 ### Setting Flash Messages
 
-To set a flash message, you can use the magic method `__set` or the `set` method of the `Flash` class. Both approaches store the message in the session so that it is available in the next request.
+To set a flash message, you can use the magic `__set` method or the `set` method of the `Flash` class. Both approaches store the message in the session so that it is available on the next request.
 
-- **Using the magic method `__set`**:
+- **Using the magic `__set` method**:
 
   ```php
   $req->flash->successMessage = 'Operation completed successfully!';
@@ -47,9 +37,9 @@ To set a flash message, you can use the magic method `__set` or the `set` method
 
 ### Retrieving Flash Messages
 
-To retrieve and remove a flash message from the session, you can use the magic method `__get` or the `get` method of the `Flash` class. These messages are removed from the session after being retrieved.
+To retrieve and remove a flash message from the session, you can use the magic `__get` method or the `get` method of the `Flash` class. These messages are removed from the session after they are retrieved.
 
-- **Using the magic method `__get`**:
+- **Using the magic `__get` method**:
 
   ```php
   $message = $req->flash->successMessage;
@@ -65,13 +55,13 @@ To retrieve and remove a flash message from the session, you can use the magic m
 
 To check if one or more flash messages exist in the session, use the `has` method:
 
-- **Single check**:
+- **Single Check**:
 
   ```php
   $exists = $req->flash->has('successMessage');
   ```
 
-- **Multiple checks**:
+- **Multiple Checks**:
 
   ```php
   $exists = $req->flash->has(['successMessage', 'errorMessage']);
@@ -79,15 +69,15 @@ To check if one or more flash messages exist in the session, use the `has` metho
 
 ### Keeping Flash Messages
 
-If you want to keep a flash message for the next request (i.e., to make it available in more than one request), use the `keep` method:
+If you want to keep a flash message for the next request (i.e., make it available in more than one request), use the `keep` method:
 
 ```php
 $req->flash->keep('successMessage');
 ```
 
-This reconfigures the message to the next request after retrieval.
+This reconfigures the message for the next request after retrieval.
 
 ## Considerations
 
-- **Persistence**: Flash messages are removed from the session after the first retrieval, unless you use the `keep` method to preserve them.
-- **Security**: Be sure to sanitize retrieved messages to avoid security issues, such as XSS attacks.
+- **Persistence**: Flash messages are removed from the session after the first retrieval unless you use the `keep` method to preserve them.
+- **Security**: Ensure that retrieved messages are sanitized to avoid security issues like XSS attacks.

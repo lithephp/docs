@@ -3,17 +3,6 @@ title: Session
 description: The session middleware in Lithe manages user session configuration and control.  
 ---
 
-
-## Installation
-
-To install the session middleware for Lithe, use the Line module installation command:
-
-```bash
-php line module:install lithe-session
-```
-
-This command will download and install the session middleware into your project.
-
 ## Using the Session Middleware
 
 Lithe includes a session middleware to manage user sessions and their variables. To configure the middleware in your application, add it using the `use()` method:
@@ -46,7 +35,7 @@ $app->use(Session([
     'secure' => true,
     'httponly' => true,
     'samesite' => 'Strict',
-    'path' => '../storage/framework/session',
+    'path' => PROJECT_ROOT . '/storage/framework/session',
 ]));
 ```
 

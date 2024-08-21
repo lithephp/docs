@@ -3,19 +3,9 @@ title: CSRF
 description: The CSRF (Cross-Site Request Forgery) middleware in Lithe protects your application from attacks that attempt to perform actions on behalf of the user without their authorization.  
 ---
 
-## Installation
-
-To install the CSRF middleware for Lithe, use the Lithe Line module installation command:
-
-```bash
-php line module:install csrf
-```
-
-This command will download and install the CSRF middleware into your project.
-
 ## Using the CSRF Middleware
 
-The CSRF middleware in Lithe is designed to protect your application from cross-site request forgery attacks. To configure it, add it to your application using the `use()` method on a Lithe application instance and provide an array of settings:
+The CSRF middleware in Lithe is designed to protect your application from Cross-Site Request Forgery (CSRF) attacks. To configure it, add it to your application using the `use()` method on a Lithe application instance and provide an array of settings:
 
 ```php
 use Lithe\Middleware\Security\csrf;
@@ -36,6 +26,8 @@ The CSRF middleware can be configured with the following parameters in an array:
 - **checkBody** (bool): Indicates if the token should be checked in the request body. Default is `false`.
 - **bodyMethods** (array): HTTP methods for which the token validation should be applied if the `checkBody` setting is enabled. Default is `['POST']`.
 - **regenerate** (bool): Indicates if the token should be regenerated on each request. Default is `false`.
+
+Example configuration:
 
 ```php
 $app->use(csrf([
@@ -104,6 +96,6 @@ The middleware automatically checks the token in POST requests and other methods
 
 - **Security**: Ensure that the CSRF token is included in all forms that submit modifiable data and in AJAX requests to prevent CSRF attacks. Proper validation and inclusion of the token are essential for adequate protection.
 - **Token Expiration**: Configure the token expiration time carefully to balance security and usability. Expired tokens are regenerated to avoid authentication issues.
-- **Body Verification**: If `checkBody` is enabled, the token will be checked in both headers and the request body. This is useful for APIs that receive tokens via POST, PUT, or DELETE but may add extra overhead.
+- **Body Verification**: If `checkBody` is enabled, the token will be checked both in headers and the request body. This is useful for APIs that receive tokens via POST, PUT, or DELETE but may add extra overhead.
 - **Token Regeneration**: When `regenerate` is enabled, a new token is generated with each request. This can enhance security but should be used cautiously to avoid impacting user experience.
 - **Error Handling**: Be prepared to handle HTTP 419 exceptions thrown when the CSRF token is invalid or missing. This may include redirecting to an error page or displaying an appropriate message to the user. For more information on handling HTTP exceptions, refer to the [HTTP Exceptions documentation](/docs/digging-deep/http-exceptions).

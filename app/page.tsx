@@ -33,7 +33,7 @@ export default function Home() {
         </Link>
       </div>
       <span className="flex flex-row items-center gap-2 text-zinc-400 text-md mt-7 -mb-12 max-[800px]:mb-12">
-        <TerminalIcon className="w-4 h-4" /> composer create-project lithecore/lithe example-app
+        <TerminalIcon className="w-4 h-4" /> composer create-project lithephp/lithephp example-app
       </span>
     </div>
   );

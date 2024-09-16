@@ -5,11 +5,11 @@ description: Lithe provides various ways to validate the data received by your a
 
 ## Quick Validation
 
-Lithe includes a variety of validation rules ready to use on your data.
+Lithe includes a variety of ready-to-use validation rules for your data.
 
-To better understand how validation works in Lithe, let's see a complete example of how to validate a form and show errors to the user. This practical guide will help you effectively validate your request data using Lithe.
+To better understand how validation works in Lithe, let's go through a complete example of how to validate a form and display errors to the user. This practical guide will help you efficiently validate the data in your requests using Lithe.
 
-### Defining Routes
+### Defining the Routes
 
 ```php
 use App\Http\Controllers\PostController;
@@ -36,7 +36,7 @@ use Lithe\Contracts\Http\Response;
 class PostController
 {
     /**
-     * Shows the form to create a new blog post.
+     * Displays the form to create a new blog post.
      */
     public static function create(Request $req, Response $res)
     {
@@ -55,9 +55,9 @@ class PostController
 
 ### Writing the Validation Logic
 
-Now let's fill in the `store` method with the necessary logic to validate the new blog post. We will use the `validate` method available on the HTTP request object. This method requires one parameter: `$rules`, which defines the validation rules for specific fields.
+Now let's fill the `store` method with the necessary logic to validate the new blog post. We'll use the `validate` method available in the HTTP request object. This method requires 1 parameter: `$rules`, which defines the validation rules for specific fields.
 
-The `validate` method returns an object with two methods: `passed`, which returns a boolean indicating whether all data is correct according to the defined rules, and `errors`, which is an array listing the fields that failed validation along with their respective error codes.
+The `validate` method returns an object with two methods: `passed`, which returns a boolean indicating whether all data is correct based on the defined rules, and `errors`, which is an array listing the fields that failed validation along with their corresponding error codes.
 
 To better understand how to use the `validate` method, see the example in the `store` method:
 
@@ -69,7 +69,9 @@ public static function store(Request $req, Response $res)
 {
     $validate = $req->validate([
         'title' => 'required|max:255',
-        'body' => 'required',
+        'body'  => 'required',
+        'status' => 'in:published,draft,pending',
+        'author' => 'name'
     ]);
 
     if (!$validate->passed()) {
@@ -83,12 +85,18 @@ public static function store(Request $req, Response $res)
                 case 1010:
                     // Handle max length error for 'title'
                     break;
+                case 1014:
+                    // Handle invalid values for 'status'
+                    break;
+                case 1015:
+                    // Handle invalid 'name' format
+                    break;
                 // Add more cases as needed
             }
         }
     }
 
-    // Continue with storing the post if validation passes...
+    // Continue storing the post if validation passes...
 
     return $res->redirect('/posts');
 }
@@ -96,9 +104,9 @@ public static function store(Request $req, Response $res)
 
 ---
 
-## Available Validation Rules and Their Error Codes
+## Available Validation Rules with Corresponding Errors
 
-Here is a list of all available validation rules and their respective error codes:
+Here's a list of all the available validation rules and their corresponding error codes:
 
 - **required** (error code: 1001): The field is required.
 - **email** (error code: 1002): The field must be a valid email address.
@@ -106,10 +114,11 @@ Here is a list of all available validation rules and their respective error code
 - **ip** (error code: 1004): The field must be a valid IP address.
 - **number** (error code: 1005): The field must be a number.
 - **integer** (error code: 1006): The field must be an integer.
-- **boolean** (error code: 1007): The field must be true or false.
-- **regex:pattern** (error code: 1008): The field must match the specified regular expression `pattern`.
-- **min:length** (error code: 1009): The field must be at least `length` characters long.
-- **max:length** (error code: 1010): The field must not exceed `length` characters.
+- **boolean** (error code: 1007): The field must be either `true` or `false`.
+- **min:length** (error code: 1009): The field must have at least `length` characters.
+- **max:length** (error code: 1010): The field cannot exceed `length` characters.
 - **range:min,max** (error code: 1011): The field must be within the range of `min` to `max`.
-- **dateFormat:format** (error code: 1012): The field must be in the date format specified by `format`.
+- **dateFormat:format** (error code: 1012): The field must match the specified date format `format`.
 - **alphanumeric** (error code: 1013): The field must be alphanumeric (only letters and numbers).
+- **in:values** (error code: 1014): The field must be one of the specified values (e.g., `in:published,draft`).
+- **name** (error code: 1015): The field must contain a valid name (specific patterns for names may be defined).

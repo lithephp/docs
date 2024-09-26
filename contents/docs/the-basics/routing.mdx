@@ -5,10 +5,7 @@ description: "In Lithe, you can define routes to control how your application re
 
 ## Defining Routes
 
-In Lithe, you define how your application responds to client requests for specific endpoints using URIs (paths) and HTTP methods such as GET, POST, among others. Methods like `$app->get()` are used to handle GET requests, `$app->post()` for POST, and `$app->use()` for applying middleware, which are callback functions for additional request handling.
-
-These methods specify callback functions, also known as "handlers," that are triggered when the application receives a request for the defined route and HTTP method. Each route in Lithe can have one or more handler functions, which are executed when the route is matched. It is important to use `$next()` to pass control to the next callback function, especially when multiple functions are defined.
-
+In Lithe, you define how the application responds to requests for endpoints using URIs and HTTP methods like GET and POST. Methods such as `get()`, `post()`, and `use()` are used to handle these requests and apply middleware. Each route can have one or more callback functions (handlers), which are executed when the route is matched. To pass control between functions, you need to use `$next()`, allowing multiple handlers to be used in sequence.
 To define routes in Lithe, use the following structure:
 
 ```php

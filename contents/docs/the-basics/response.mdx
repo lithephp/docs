@@ -15,10 +15,10 @@ $app->get('/', function ($req, $res) {
 });
 ```
 
-You can also specify the `Lithe\Contracts\Http\Response` interface as the type in the route closure.
+You can also specify the `Lithe\Http\Response` interface as the type in the route closure.
 
 ```php
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Response;
 
 $app->get('/', function ($req, Response $res) {
     $res->send('Hello World!');

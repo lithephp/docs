@@ -248,20 +248,42 @@ $app->route('/book')
 
 ---
 
+## Route Definition Shortcuts
+
+In Lithe, you can simplify route definitions using functional syntax. This approach allows you to create routes more concisely and expressively, making your code more readable and easier to maintain.
+
+The functional syntax uses pre-defined functions that you can import to define your routes. Here's a basic example:
+
+```php
+use function Lithe\Orbs\Http\Router\{get, post, route};
+
+get($path, $handler);
+post($path, $handler);
+
+route($path)
+    ->get($handler);
+```
+
+These route definition shortcuts in Lithe offer a powerful way to structure your application more efficiently. By using this functional syntax, your code becomes more organized and easier to navigate, allowing you to focus on business logic rather than application structure.
+
+---
+
 ## The `Lithe\Http\Router` Class
 
 Use the `Router` class from Lithe to create modular and mountable route handlers. An instance of `Router` is a complete system of middleware and routing; for this reason, it is often referred to as a "mini-application."
 
 The following example creates a router as a module, loads a middleware function into it, defines some routes, and mounts the router module on a path in the main application.
 
-Create a router file named `birds.php` in the application directory (`src`), with the following content:
+### Classic Syntax
 
-```php:src/birds.php
+Create a router file named `birds.php` in the application directory with the following content:
+
+```php:birds.php showLineNumbers
 <?php 
 
 $router = new \Lithe\Http\Router;
 
-// Middleware specific to this router
+// Specific middleware for this router
 $timeLog = function ($req, $res, $next) {
     echo 'Time: ' . date('Y-m-d');
     $next();
@@ -282,14 +304,56 @@ $router->get('/about', function ($req, $res) {
 return $router;
 ```
 
-Then, load the router module into the application:
+Then, load the router module into your application:
 
-```php:src/App.php
-$birds = require(__DIR__ . '/birds.php');
+```php:App.php
+$birds = require(__DIR__ .'/birds.php');
 
 // ...
 
 $app->use('/birds', $birds);
 ```
+
+### Functional Syntax
+
+Create a router file named `birds.php` in the application directory with the following content:
+
+```php:birds.php showLineNumbers
+<?php
+use function Lithe\Orbs\Http\Router\{get, apply};
+
+// Specific middleware for this router
+$timeLog = function ($req, $res, $next) {
+    echo 'Time: ' . date('Y-m-d');
+    $next();
+};
+
+apply($timeLog);
+
+// Define the homepage route
+get('/', function ($req, $res) {
+    $res->send('Birds homepage');
+});
+
+// Define the about route
+get('/about', function ($req, $res) {
+    $res->send('About birds');
+});
+```
+
+Then, load the router module into your application:
+
+```php:App.php
+use function Lithe\Orbs\Http\Router\{router, apply};
+// ...
+
+$birds = router(__DIR__ .'/birds');
+
+// ...
+
+apply('/birds', $birds);
+```
+
+With functional syntax, each file is treated as a separate router instance by using the `router` function. This means that functions like `get` and `post` are specific to that file, allowing you to organize your routes in a modular and intuitive way. Pretty cool way to structure your code, don't you think?
 
 The application will now be able to handle requests to `/birds` and `/birds/about`, as well as invoke the `$timeLog` middleware function, which is specific to the route.

@@ -14,7 +14,7 @@ To better understand how validation works in Lithe, let's go through a complete 
 ```php
 use App\Http\Controllers\PostController;
 
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->route('/post/create')
     ->get([PostController::class, 'create'])
@@ -30,8 +30,8 @@ The GET route displays a form for the user to create a new blog post, while the 
 ```php
 namespace App\Http\Controllers;
 
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 
 class PostController
 {

@@ -139,7 +139,7 @@ To learn more about <a href="https://laravel.com/docs/blade" target="_blank">Bla
 
 > Note: This section contains advanced topics. If you prefer not to learn about this now, feel free to skip this section.
 
-Use the `engine` method of the `Lithe\App` class to configure or create your own template engine.
+Use the `engine` method from the `Lithe\App` class or its shortcut in the Orb, `Lithe\Orbs\App\engine`, to configure a template engine or create your own custom engine. This allows you to choose from available engines like Blade or Twig, or develop a custom solution to meet your specific needs, ensuring flexibility in rendering your application's template files.
 
 ```php
 $app->engine($name, $callback);

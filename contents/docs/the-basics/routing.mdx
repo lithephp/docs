@@ -21,7 +21,7 @@ Where:
 Here is a simple example of a route in Lithe:
 
 ```php {3,4,5}
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->get('/', function ($req, $res) {
     return $res->send('Hello World!');

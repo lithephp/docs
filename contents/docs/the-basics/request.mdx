@@ -17,10 +17,10 @@ $app->get('/', function ($req) {
 });
 ```
 
-You can also specify the `Lithe\Contracts\Http\Request` interface as the type in the route closure.
+You can also specify the `Lithe\Http\Request` interface as the type in the route closure.
 
 ```php
-use Lithe\Contracts\Http\Request;
+use Lithe\Http\Request;
 
 $app->get('/', function (Request $req) {
     // ...
@@ -54,7 +54,7 @@ if ($req->is('admin/*')) {
 The `method` method returns the HTTP verb of the request. You can use the `isMethod` method to check if the HTTP verb matches a specific string:
 
 ```php
-$method = $req->method;
+$method = $req->method();
  
 if ($req->isMethod('post')) {
     // ...

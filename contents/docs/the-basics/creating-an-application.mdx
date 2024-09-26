@@ -1,30 +1,44 @@
 ---
-title: Creating an Application
-description: Learn how to create your first application with Lithe.
+title: Creating an Application  
+description: "Lithe allows you to create applications in a simple and versatile way, offering two writing styles: classic and functional. You can choose one of the two or even combine both, without losing efficiency!"  
 ---
 
-## Instantiating the Application
+## Classic Style: Instantiating the Application
 
-To start developing with Lithe, create a new instance of the `Lithe\App` class in the `src/App.php` file and define a route:
+To get started with the classic style, you'll need to mount the application in the `App.php` file using the `mount` method from the `Lithe\App` class. After that, simply define your routes:
 
 ```php
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->get('/', function ($req, $res) {
     $res->send('Hello World!');
 });
 ```
 
-The `App` class is the main interface for configuring and managing your Lithe application. It centralizes the application's configuration and management, making it easy to create and organize your web application efficiently.
+The `App` class is the heart of your Lithe application. It manages all the application logic, making it easy to create routes, handle requests, and responses in an organized way.
+
+## Functional Style: Practicality and Agility
+
+If you prefer a more minimalist approach, you can opt for the functional syntax without the need to directly instantiate the class:
+
+```php
+use function Lithe\Orbs\Http\Router\get;
+
+get('/', function ($req, $res) {
+    $res->send('Hello World!');
+});
+```
+
+This method is quick, efficient, and allows you to write code in an even more concise manner.
 
 ---
 
 ## Running the Application
 
-To make your application work, you need to call the `listen` method:
+Now that you've written your first route, the next step is to run the application. If you're using the classic way, call the `listen` method for Lithe to start listening for requests:
 
 ```php
-$app = new \Lithe\App;
+$app = \Lithe\App::mount();
 
 $app->get('/', function ($req, $res) {
     $res->send('Hello World!');
@@ -33,33 +47,37 @@ $app->get('/', function ($req, $res) {
 $app->listen(); 
 ```
 
-The `listen` method is responsible for starting the application and listening for incoming requests. After configuring all routes and registering the necessary resources, calling `listen` makes the application start processing and responding to client requests.
+With **Lithe 2**, this method is automatically invoked.
 
 ---
 
 ## Serving the Application
 
-### Using the Built-in Server
+### Using the Built-in PHP Server
 
-To test your application locally, you need to have PHP installed on your system. With PHP installed, run the built-in server using the following command:
+Testing your application locally is easy! With PHP installed, you can start the built-in server by executing the following command:
 
 ```bash
 php line serve
 ```
 
-This will start the server on the default port `8000`. If you want to specify a different port, you can use the optional `PORT` parameter. For example, to start the server on port `9000`, use:
+This will start the server on port `8000`. To change the port, just pass the desired value as an argument:
 
 ```bash
 php line serve 9000
 ```
 
-Access `http://localhost:9000/` in your browser to view your application in action.
+Open your browser and go to `http://localhost:9000/` to see your application in action!
 
-### Using Apache or Another Web Server
+### Using Web Servers like Apache
 
-If you prefer to use Apache or another web server, the `public` directory is the entry point. Depending on your server configuration, you can access your application through URLs such as:
+If you prefer to run your application on a web server like Apache, the entry point will be the `public` directory. Adjust the URL settings according to your environment:
 
-- **Local Development Environment (Example):** `http://localhost/your-project/public/`
-- **Production Environment (Example):** `http://your-domain.com/`
+- **Local Environment:** `http://localhost/your-project/public/`
+- **Production:** `http://your-domain.com/`
 
-Make sure to adjust the access path based on your specific environment and web server configuration.
+Make sure the server is pointing to the correct directory and you're good to go! Your application will be available to the world.
+
+---
+
+With Lithe, simplicity and flexibility are at your fingertips, providing an agile development experience, whether for small or large projects. Start now and build something amazing!

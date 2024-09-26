@@ -31,6 +31,16 @@ Lithe is compatible with several popular template engines, such as Blade, Twig, 
 
 After configuring the template engine, install the corresponding Composer package for the chosen engine to ensure everything works correctly.
 
+### Shortcut for Configuration
+
+An alternative way to define options in Lithe is by using the Orb `set` shortcut function. It's very simple to use:
+
+```php
+use function Lithe\Orbs\App\set;
+
+set($name, $value);
+```
+
 ---
 
 ## Using Template Engines

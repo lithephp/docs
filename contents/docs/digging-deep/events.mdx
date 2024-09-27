@@ -1,0 +1,60 @@
+---
+title: Events
+description: Events are a fundamental concept in many applications, enabling different parts of the system to communicate efficiently and decoupled. In the context of Lithe, events allow you to react to specific actions that occur in your application, such as user registration or process completion.
+---
+
+## Registering Event Handlers
+
+To make your application respond to specific events, use the `on` method to register a handler. This method takes two parameters: the name of the event you want to listen for and a handler function that will be called whenever the event is emitted.
+
+```php
+$app->on('user.registered', function($user) {
+    echo "User registered: " . $user->name;
+});
+```
+
+In this example, whenever a user is registered, the provided handler function will be executed, displaying the user’s name. This allows you to easily add additional behaviors whenever that event occurs, such as sending a welcome email or logging information.
+
+---
+
+## Removing Event Handlers
+
+Sometimes, you may want to disable the response to an event, for instance, when a handler is no longer needed. To do this, use the `off` method from the `Lithe\App` class or the shortcut function `Lithe\Orbs\App\off`. This method also takes two parameters: the event name and the handler you want to remove.
+
+```php
+$app->off('user.registered', $handler);
+```
+
+Here, `$handler` refers to the function you previously registered. Using `off` helps prevent unnecessary calls to handlers that are no longer relevant, keeping your application clean and efficient.
+
+---
+
+## Emitting Events
+
+When you want to notify your application that something has happened (such as a user registration), use the `emit` method. This method also belongs to the `Lithe\App` class or can be accessed through the shortcut function `Lithe\Orbs\App\emit`. It takes the event name and any additional arguments you want to pass to the registered handlers.
+
+```php
+$app->emit('user.registered', $newUser);
+```
+
+In this case, the `user.registered` event is triggered, and the `$newUser` object is passed to the registered handlers. This allows the handlers to access relevant information about the event that occurred.
+
+---
+
+## Shortcuts in `Lithe\Orbs\App`
+
+The shortcuts provide a convenient way to access the event methods directly, without needing to instantiate the `Lithe\App` class. You can use the following functions to streamline event usage:
+
+```php
+use function Lithe\Orbs\App\{on, off, emit};
+
+on('event.name', $handler);
+off('event.name', $handler);
+emit('event.name', $arg1, $arg2);
+```
+
+This simplifies the process of registering, removing, and emitting events, making the code more direct and readable.
+
+---
+
+Managing events in Lithe enables efficient communication between components of your application, making it more dynamic and modular. By using the `on`, `off`, and `emit` methods, you can effectively register handlers and trigger events as needed. This approach not only improves code organization but also makes it easier to maintain and expand your application in the future.

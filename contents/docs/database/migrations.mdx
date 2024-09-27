@@ -5,7 +5,7 @@ description: "Migrations are like version control for your database. They allow 
 
 ## Generating Migrations
 
-You can use the `make:migration` Line command to generate a database migration. The new migration will be placed in the `src/database/migrations` directory of your project. Each migration file name contains a timestamp that allows Lithe to determine the order of migrations.
+You can use the `make:migration` Line command to generate a database migration. The new migration will be placed in the `database/migrations` directory of your project. Each migration file name contains a timestamp that allows Lithe to determine the order of migrations.
 
 ```bash
 php line make:migration MigrationName --template=TemplateName
@@ -36,7 +36,7 @@ Run the following command to create a migration using the Eloquent template:
 php line make:migration CreateUsersTable --template=eloquent
 ```
 
-This will create a migration file in the `src/database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
+This will create a migration file in the `database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
 
 2. **Example Migration File (Eloquent)**
 
@@ -85,7 +85,7 @@ Run the command to create a migration:
 php line make:migration CreateUsersTable --template=mysqli
 ```
 
-This will create a migration file in the `src/database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
+This will create a migration file in the `database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
 
 2. **Example Migration File (MySQLi)**
 

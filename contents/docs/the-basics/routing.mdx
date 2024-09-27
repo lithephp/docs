@@ -26,8 +26,6 @@ $app = \Lithe\App::mount();
 $app->get('/', function ($req, $res) {
     return $res->send('Hello World!');
 });
-
-$app->listen(); 
 ```
 
 In this example, we define a route that responds with "Hello World!" when a GET request is made to the home page.

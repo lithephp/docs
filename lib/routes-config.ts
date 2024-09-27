@@ -70,6 +70,10 @@ export const ROUTES: Array<RouteInterface> = [
         href: "/log",
       },
       {
+        title: "Events",
+        href: "/events",
+      },
+      {
         title: "HTTP Exceptions",
         href: "/http-exceptions"
       },
@@ -80,6 +84,10 @@ export const ROUTES: Array<RouteInterface> = [
       {
         title: "Mail",
         href: "/mail",
+      },
+      {
+        title: "Orbs",
+        href: "/orbs",
       },
     ],
   },

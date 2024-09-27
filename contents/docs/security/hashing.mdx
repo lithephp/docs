@@ -9,57 +9,54 @@ description: "Lithe offers a security module called Hash with methods to create 
 
 You can create a hash from a string using the `make` method provided by Lithe's `Hash` security module. All hashes are generated using the Bcrypt algorithm.
 
-```php
-use Lithe\Contracts\Http\Request;
-use Lithe\Contracts\Http\Response;
+```php {8}
+use Lithe\Http\Request;
+use Lithe\Http\Response;
 use Lithe\Support\Security\Hash;
+use function Lithe\Orbs\Http\Router\{get, post, route};
 
-$app = new \Lithe\App;
-
-$app->post('/user/register', function (Request $req, Response $res) {
-    $body = $req->body;
-
+post('/user/register', function (Request $req, Response $res) {
     // Creating a hash for the 'password' field from the request body
-    $hashedPassword = Hash::make($body->password);
+    $hashedPassword = Hash::make($req->input('input'));
 
     // ...
 
     // Returning the response
     return $res->send("User registered successfully!");
 });
-
-$app->listen();
 ```
 
 ### Verifying a Hash
 
-You can verify if a string matches a hash using the `check` method provided by Lithe's `Hash` security module.
+You can check if a string matches a hash using the `check` method provided by Lithe's `Hash` security module.
 
-```php
+```php {3}
 use Lithe\Support\Security\Hash;
 
 $valid = Hash::check($plainPassword, $hashedPassword);
 ```
+
 If the string matches the provided hash, the method returns `true`. Otherwise, it returns `false`.
 
 ### Rehashing a Value
 
-You can check if a hash needs to be rehashed and, if so, create a new hash with a different cost using the `needsRehash` method provided by Lithe's `Hash` security module.
+You can check if a hash needs rehashing and, if necessary, create a new hash with a different cost using the `needsRehash` method provided by Lithe's `Hash` security module.
 
-```php
+```php {3}
 use Lithe\Support\Security\Hash;
 
 $needsRehash = Hash::needsRehash($hashedPassword, ['cost' => 12]);
 ```
-If the hash needs to be rehashed, the method returns `true`. Otherwise, it returns `false`.
 
-To handle rehashing properly, it is recommended to check if the hash needs to be rehashed and, if necessary, create a new hash and update the stored hash.
+If the hash needs rehashing, the method returns `true`. Otherwise, it returns `false`.
+
+To handle rehashing appropriately, it is recommended to check if the hash needs rehashing and, if necessary, create a new hash and update the stored hash.
 
 ```php
 use Lithe\Support\Security\Hash;
 
 if (Hash::needsRehash($hashedPassword, ['cost' => 12])) {
     $newHashedPassword = Hash::make($plainPassword, ['cost' => 12]);
-    // Update the stored hash in the database
+    // Update the hash stored in the database
 }
 ```

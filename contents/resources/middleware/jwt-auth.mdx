@@ -1,0 +1,76 @@
+---
+title: JWT Auth  
+description: A powerful JWT-based authentication middleware, suitable for enterprise-level systems.
+---
+
+## Installing the JWT Authentication Middleware
+
+To use JWT authentication in Lithe, you will need to install the `lithephp/jwt-auth` package. You can install it using Composer:
+
+```bash
+composer require lithephp/jwt-auth
+```
+
+## Using the JWT Authentication Middleware
+
+After installation, you can configure the JWT authentication middleware in your application. Add it using the `use()` method of the `\Lithe\App` class or use its shortcut, the `\Lithe\Orbs\Http\Router\apply` function:
+
+```php
+use Lithe\Middleware\Auth\JWT;
+
+$app->use(JWT('your_secret_key'));
+```
+
+This ensures that JWT-based authentication is applied to all requests.
+
+### Configuring the JWT Authentication Middleware
+
+The JWT authentication middleware can be configured with the following parameters:
+
+- **alg**: The encoding algorithm used (default: `HS256`).
+- **authHeader**: The header where the JWT token will be sent (default: `Authorization`).
+- **tokenPrefix**: The prefix of the token in the header (default: `Bearer`).
+- **leeway**: Clock tolerance in seconds (default: `60`).
+- **renew**: Allow token renewal (default: `false`).
+- **renewThreshold**: Time in seconds before token expiration that allows renewal (default: `300`).
+
+Example configuration:
+
+```php
+$app->use(JWT('your_secret_key', [
+    'alg' => 'HS256',
+    'renew' => true,
+    'renewThreshold' => 300,
+]));
+```
+
+### Generating JWT Tokens
+
+To generate a JWT token for a specific user, use the `generateToken` method of the middleware during authentication:
+
+```php
+post('/login', function ($req, $res) {
+    // User authentication logic (not shown here)
+    $user = (object)['id' => 1, 'name' => 'William']; // Example authenticated user
+    $token = $req->jwtAuth->generateToken($user); // Token generation
+    return $res->send(['token' => $token]);
+});
+```
+
+### Protecting Routes with JWT
+
+Once the middleware is configured, you can protect your routes as follows:
+
+```php
+get('/protected', function ($req, $res) {
+    // Access user information from the decoded token
+    $user = $req->user;
+    return $res->send("Welcome, {$user->name}!");
+});
+```
+
+### Final Considerations
+
+- **Token Expiration**: The JWT token should be renewed before expiration if renewal is enabled.
+- **Security**: Use a strong secret key and keep it secure.
+- **Error Handling**: The middleware logs authentication errors and proceeds with application execution, allowing for proper handling.

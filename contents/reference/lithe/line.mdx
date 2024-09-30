@@ -1,0 +1,63 @@
+---
+title: Lithe\Console\Line
+description: The `Line` class manages and executes console commands in Lithe, integrating with Symfony Console. It allows for the efficient registration, creation, and execution of custom commands.
+---
+
+## Methods
+
+### `use(array $commands)`
+
+- **Description:** Registers multiple commands for the console application.
+
+- **Parameters:**
+
+    - **`$commands`**: An array of command instances (`SymfonyCommand`). Each item must be a valid instance of `SymfonyCommand`.
+
+- **Exceptions:**
+
+    - **`InvalidArgumentException`**: If any item in the array is not an instance of `SymfonyCommand`.
+
+```php
+Line::use([
+    $ServeCommand,
+    $migrateCommand
+]);
+```
+
+### `listen(array $args = [])`
+
+- **Description:** Executes the console application based on the provided arguments.
+
+- **Parameters:**
+
+    - **`$args`** (optional): Command-line arguments that will be processed by the console application.
+
+- **Returns:** A status code (`int`), where `0` means success and `1` indicates a failure.
+
+```php
+$status = Line::listen($argv);
+```
+
+### `create(string $name, string $description, callable $handler, array $arguments = [], array $options = [])`
+
+- **Description:** Creates a custom console command.
+
+- **Parameters:**
+
+    - **`$name`**: The name of the command.
+    - **`$description`**: The description of the command.
+    - **`$handler`**: Callback function executed when the command is called.
+    - **`$arguments`** (optional): Arguments for the command.
+    - **`$options`** (optional): Options for the command.
+
+- **Returns:** An object of type `SymfonyCommand`.
+
+```php
+$command = Line::create(
+    'make:migration',
+    'Create a new migration file',
+    function(InputInterface $input, OutputInterface $output) {
+        $output->writeln('Migration created!');
+        return 0;
+    }
+);

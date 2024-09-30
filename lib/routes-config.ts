@@ -127,12 +127,30 @@ export const ROUTES: Array<RouteInterface> = [
 
 export const REFERENCE_ROUTES: Array<RouteInterface> = [
   {
-    title: "Lithe@1.0",
+    title: "Lithe@2.x",
+    href: "lithe-2.x",
+    items: [
+      {
+        title: "App",
+        href: "/app",
+      },
+    ],
+  },
+  {
+    title: "Lithe@1.x",
     href: "lithe",
     items: [
       {
         title: "App",
         href: "/app",
+      },
+      {
+        title: "Line",
+        href: "/line",
+      },
+      {
+        title: "Manager",
+        href: "/manager",
       },
       {
         title: "Request",

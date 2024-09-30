@@ -1,0 +1,41 @@
+---
+title: Lithe\Database\Manager
+description: The `Manager` class is responsible for managing database connections in applications using Lithe. It allows for configuring and initializing database connections, as well as ensuring that the required database exists.
+---
+
+## Methods
+
+### `configure(string $name, callable $config)`
+
+- **Description:** Configures a database connection.
+
+- **Parameters:**
+
+    - **`$name`**: The name of the connection configuration.
+    - **`$config`**: Configuration function that receives an array of database configuration.
+
+```php
+Manager::configure('mysql', function($dbConfig) {
+    $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']}";
+    return new PDO($dsn, $dbConfig['username'], $dbConfig['password']);
+});
+```
+
+### `initialize(string $name = null)`
+
+- **Description:** Initializes and returns the configured database connection.
+
+- **Parameters:**
+
+    - **`$name`** (optional): The name of the database configuration to be initialized. If not provided, it uses the connection method specified in the `DB_CONNECTION_METHOD` environment variable.
+
+- **Returns:** The configured database connection, or `null` if initialization is not needed.
+
+- **Exceptions:**
+
+    - **`RuntimeException`**: If a required environment variable is missing.
+    - **`Exception`**: If the specified database configuration is not found or if an error occurs while configuring the connection.
+
+```php
+$dbConnection = Manager::initialize();
+```

@@ -21,7 +21,7 @@ Where:
 Here is a simple example of a route in Lithe:
 
 ```php {3,4,5}
-$app = \Lithe\App::mount();
+$app = new \Lithe\App;
 
 $app->get('/', function ($req, $res) {
     return $res->send('Hello World!');
@@ -118,7 +118,7 @@ You can define typed parameters to ensure that values meet specific criteria.
 
 ```php
 $app->get('/user/:id=int', function ($req, $res) {
-    $res->send($req->params);
+    $res->send($req->param('id'));
 });
 ```
 
@@ -132,7 +132,7 @@ You can also use the `|` operator to define optional types in route parameters, 
 
 ```php
 $app->get('/user/:identifier=int|username', function ($req, $res) {
-    $res->send($req->params);
+    $res->send($req->param('identifier'));
 });
 ```
 
@@ -144,7 +144,7 @@ To have more control over the exact string that can be matched by a route parame
 
 ```php
 $app->get('/user/:name=regex<[a-z]+>', function ($req, $res) {
-    $res->send($req->params);
+    $res->send($req->param('name'));
 });
 ```
 
@@ -243,26 +243,6 @@ $app->route('/book')
 
 ---
 
-## Route Definition Shortcuts
-
-In Lithe, you can simplify route definitions using functional syntax. This approach allows you to create routes more concisely and expressively, making your code more readable and easier to maintain.
-
-The functional syntax uses pre-defined functions that you can import to define your routes. Here's a basic example:
-
-```php
-use function Lithe\Orbs\Http\Router\{get, post, route};
-
-get($path, $handler);
-post($path, $handler);
-
-route($path)
-    ->get($handler);
-```
-
-These route definition shortcuts in Lithe offer a powerful way to structure your application more efficiently. By using this functional syntax, your code becomes more organized and easier to navigate, allowing you to focus on business logic rather than application structure.
-
----
-
 ## The `Lithe\Http\Router` Class
 
 Use the `Router` class from Lithe to create modular and mountable route handlers. An instance of `Router` is a complete system of middleware and routing; for this reason, it is often referred to as a "mini-application."
@@ -339,16 +319,18 @@ get('/about', function ($req, $res) {
 Then, load the router module into your application:
 
 ```php:App.php
-use function Lithe\Orbs\Http\Router\{router, apply};
+use function Lithe\Orbs\Http\Router\{router};
 // ...
 
 $birds = router(__DIR__ .'/birds');
 
 // ...
 
-apply('/birds', $birds);
+$app->use('/birds', $birds);
 ```
 
-With functional syntax, each file is treated as a separate router instance by using the `router` function. This means that functions like `get` and `post` are specific to that file, allowing you to organize your routes in a modular and intuitive way. Pretty cool way to structure your code, don't you think?
+Sure! Here’s the translation:
+
+"With the functional syntax, each file is treated as a separate instance of the router when using the `router` function. This means that functions like `get` and `post` are specific to that instance of the file, allowing you to organize your routes in a modular and intuitive way. This approach enhances the maintenance and clarity of the code. It's an amazing way to structure your code, don’t you think?"
 
 The application will now be able to handle requests to `/birds` and `/birds/about`, as well as invoke the `$timeLog` middleware function, which is specific to the route.

@@ -52,10 +52,6 @@ export const ROUTES: Array<RouteInterface> = [
         href: "/validation",
       },
       {
-        title: "Session",
-        href: "/session",
-      },
-      {
         title: "File Uploads",
         href: "/file-uploads",
       },
@@ -77,32 +73,6 @@ export const ROUTES: Array<RouteInterface> = [
         title: "HTTP Exceptions",
         href: "/http-exceptions"
       },
-      {
-        title: "Cache",
-        href: "/cache",
-      },      
-      {
-        title: "Mail",
-        href: "/mail",
-      },
-      {
-        title: "Orbs",
-        href: "/orbs",
-      },
-    ],
-  },
-  {
-    title: "Security",
-    href: "security",
-    items: [
-      {
-        title: "Encryption",
-        href: "/encryption",
-      },
-      {
-        title: "Hashing",
-        href: "/hashing",
-      },
     ],
   },
   {
@@ -123,19 +93,19 @@ export const ROUTES: Array<RouteInterface> = [
       },
     ],
   },
-];
-
-export const REFERENCE_ROUTES: Array<RouteInterface> = [
   {
-    title: "Lithe@2.x",
-    href: "lithe-2.x",
+    title: "Next steps",
+    href: "next-steps",
     items: [
       {
-        title: "App",
-        href: "/app",
+        title: "Next steps",
+        href: "/next-steps",
       },
     ],
   },
+];
+
+export const REFERENCE_ROUTES: Array<RouteInterface> = [
   {
     title: "Lithe@1.x",
     href: "lithe",

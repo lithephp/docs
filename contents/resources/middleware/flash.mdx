@@ -1,7 +1,19 @@
 ---
-title: Flash Messages  
+
+title: Flash  
 description: The Flash Messages middleware in Lithe allows you to store and retrieve temporary messages between requests.  
+
 ---
+
+## Installing the Flash Messages Middleware
+
+To install the Flash Messages middleware, use Composer:
+
+```bash
+composer require lithemod/session
+```
+
+You can find more information and the source code for the module at [github.com/lithemod/session](https://github.com/lithemod/session).
 
 ## Using the Flash Messages Middleware
 
@@ -9,15 +21,13 @@ The Flash Messages middleware in Lithe allows you to store temporary messages in
 
 ### Configuring the Flash Middleware
 
-To use the Flash Messages middleware, you need to add it to your application using the `use()` method:
+To use the Flash Messages middleware, add it to your application using the `use()` method:
 
 ```php
 use Lithe\Middleware\Session\flash;
 
 $app->use(flash());
 ```
-
-This adds the flash message functionality to your application, allowing you to store and retrieve temporary messages.
 
 ### Setting Flash Messages
 
@@ -26,13 +36,17 @@ To set a flash message, you can use the magic `__set` method or the `set` method
 - **Using the magic `__set` method**:
 
   ```php
-  $req->flash->successMessage = 'Operation completed successfully!';
+  $app->get('/set-message', function ($req, $res) {
+      $req->flash->successMessage = 'Operation completed successfully!';
+  });
   ```
 
 - **Using the `set` method**:
 
   ```php
-  $req->flash->set('successMessage', 'Operation completed successfully!');
+  $app->get('/set-message', function ($req, $res) {
+      $req->flash->set('successMessage', 'Operation completed successfully!');
+  });
   ```
 
 ### Retrieving Flash Messages
@@ -42,13 +56,19 @@ To retrieve and remove a flash message from the session, you can use the magic `
 - **Using the magic `__get` method**:
 
   ```php
-  $message = $req->flash->successMessage;
+  $app->get('/get-message', function ($req, $res) {
+      $message = $req->flash->successMessage;
+      echo $message; // Displays the message
+  });
   ```
 
 - **Using the `get` method**:
 
   ```php
-  $message = $req->flash->get('successMessage');
+  $app->get('/get-message', function ($req, $res) {
+      $message = $req->flash->get('successMessage');
+      echo $message; // Displays the message
+  });
   ```
 
 ### Checking Flash Messages
@@ -58,13 +78,19 @@ To check if one or more flash messages exist in the session, use the `has` metho
 - **Single Check**:
 
   ```php
-  $exists = $req->flash->has('successMessage');
+  $app->get('/check-message', function ($req, $res) {
+      $exists = $req->flash->has('successMessage');
+      echo $exists ? 'Message exists!' : 'Message does not exist.';
+  });
   ```
 
 - **Multiple Checks**:
 
   ```php
-  $exists = $req->flash->has(['successMessage', 'errorMessage']);
+  $app->get('/check-messages', function ($req, $res) {
+      $exists = $req->flash->has(['successMessage', 'errorMessage']);
+      echo $exists ? 'Messages exist!' : 'No messages exist.';
+  });
   ```
 
 ### Keeping Flash Messages
@@ -72,7 +98,9 @@ To check if one or more flash messages exist in the session, use the `has` metho
 If you want to keep a flash message for the next request (i.e., make it available in more than one request), use the `keep` method:
 
 ```php
-$req->flash->keep('successMessage');
+$app->get('/keep-message', function ($req, $res) {
+    $req->flash->keep('successMessage');
+});
 ```
 
 This reconfigures the message for the next request after retrieval.
@@ -80,4 +108,4 @@ This reconfigures the message for the next request after retrieval.
 ## Considerations
 
 - **Persistence**: Flash messages are removed from the session after the first retrieval unless you use the `keep` method to preserve them.
-- **Security**: Ensure that retrieved messages are sanitized to avoid security issues like XSS attacks.
+- **Security**: Ensure that retrieved messages are sanitized to avoid security issues like XSS attacks. Proper validation and handling of messages are essential to maintain application security.

@@ -22,7 +22,7 @@ get('/users/:id', function ($req, $res) {
         ]);
     } 
 
-    return view('profile', compact('user'));
+    return $res->view('profile', compact('user'));
 });
 ```
 

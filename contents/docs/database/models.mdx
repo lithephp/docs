@@ -5,7 +5,7 @@ description: "Models in Lithe represent the application's data access layer. The
 
 ## Creating Models
 
-In Lithe, models are created using the Line `make:model` command. This command creates a model file inside the `models/` directory.
+In Lithe, models are created using the Line `make:model` command. This command creates a model file inside the `src/models/` directory.
 
 ```bash
 php line make:model ModelName --template=eloquent
@@ -66,14 +66,13 @@ class User
 
 In Lithe, models located in `models` are automatically available for use throughout the application without the need for explicit imports in your files.
 
-Suppose you have an Eloquent model `User` defined in `models/User.php`. You can use it directly in your routes without any manual inclusion:
+Suppose you have an Eloquent model `User` defined in `src/models/User.php`. You can use it directly in your routes without any manual inclusion:
 
 ```php
 use App\Models\User;
 
 $app->get('/users/:id=int', function ($req, $res) {
-    $params = $req->params;
-    $id = $params->id;
+    $id = $req->param('id');
 
     // Example of using the User model with Eloquent
     $user = User::find($id);

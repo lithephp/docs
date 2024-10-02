@@ -1,40 +1,11 @@
 ---
-title: App  
+title: Lithe\App  
 description: The `Lithe\App` class is the main entry point for applications in Lithe. It manages the application's lifecycle, middleware configurations, routes, and responds to HTTP requests.
 ---
 
 ## Description
 
 The `Lithe\App` class is the foundation for creating and managing an application in Lithe. It provides methods to configure middleware, define routes, handle HTTP exceptions, and start the application. Through `App`, you can manage application configuration, control execution flow, and provide responses to incoming HTTP requests.
-
-Here is a basic example of how to create and use an instance of `Lithe\App`:
-
-```php
-$app = new \Lithe\App;
-
-// Global middleware
-$app->use(function($req, $res, $next) {
-    $next();
-});
-
-// Route for '/hello'
-$app->get('/hello', function($req, $res) {
-    $res->send('Hello, World!');
-});
-
-// Response for HTTP 400 error
-$app->httpException(400, function($req, $res) {
-    $res->send('Page Not Found');
-});
-
-// Response for HTTP 500 error
-$app->httpException(500, function($req, $res, $exception) {
-    $res->send('Internal Server Error');
-});
-
-// Start the application
-$app->listen();
-```
 
 ## Methods
 
@@ -59,7 +30,7 @@ $app->listen();
   - **Parameters:**
     - **`$middleware`** - Middleware or router to be added.
     ```php
-    $app->use('/api', function($req, $res, $next) {
+    $app->use(function($req, $res, $next) {
         // Middleware logic
         $next();
     });
@@ -74,13 +45,13 @@ $app->listen();
     $app->set('view engine', 'blade');
     ```
 
-### `httpException(int $status, callable $handler): void`
+### `fail(int $status, callable $handler): void`
   - **Description:** Defines a specific handler for HTTP exceptions based on the status code.
   - **Parameters:**
     - **`$status`** - HTTP status code for which the handler will be defined.
     - **`$handler`** - Handler to manage the HTTP exception.
     ```php
-    $app->httpException(404, function($req, $res) {
+    $app->fail(404, function($req, $res) {
         $res->status(404)->send('Page Not Found');
     });
     ```
@@ -102,3 +73,21 @@ $app->listen();
             $res->send('User List');
         });
     ```
+
+### `on(string $event, callable $handler): void`  
+- **Description:** Registers an event handler for a specific event.  
+- **Parameters:**  
+  - **`$event`** - Name of the event.  
+  - **`$handler`** - Handler function to be called when the event is emitted.  
+
+### `off(string $event, callable $handler): void`  
+- **Description:** Removes an event handler for a specific event.  
+- **Parameters:**  
+  - **`$event`** - Name of the event.  
+  - **`$handler`** - Handler function to be removed.  
+
+### `emit(string $event, ...$args): void`  
+- **Description:** Emits an event, calling all registered handlers for that event.  
+- **Parameters:**  
+  - **`$event`** - Name of the event.  
+  - **`...$args`** - Any additional arguments to be passed to the handlers.  

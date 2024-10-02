@@ -1,0 +1,67 @@
+---
+title: Hash
+description: "Lithe provides a security module called Hash with methods to create and verify hashes of sensitive data using the Bcrypt algorithm. Bcrypt is widely recognized for its security and efficiency in protecting passwords and other sensitive data."
+---
+
+## Installation
+
+To install the `lithemod/hash` package, run:
+
+```bash
+composer require lithemod/hash
+```
+
+The source code is available at [github.com/lithemod/hash](https://github.com/lithemod/hash).
+
+## Using Hash
+
+### Creating a Hash
+
+You can create a hash from a string using the `make` method provided by the Lithe `Hash` security module. All hashes are generated using the Bcrypt algorithm.
+
+```php
+use Lithe\Support\Security\Hash;
+
+$app->post('/user/register', function ($req, $res) {
+    // Creating a hash for the 'password' field from the request body
+    $hashedPassword = Hash::make($req->input('input'));
+
+    // ...
+
+    // Returning the response
+    return $res->send("User registered successfully!");
+});
+```
+
+### Verifying a Hash
+
+You can verify if a string matches a hash using the `check` method provided by the Lithe `Hash` security module.
+
+```php
+use Lithe\Support\Security\Hash;
+
+$valid = Hash::check($plainPassword, $hashedPassword);
+```
+If the string matches the provided hash, the method returns `true`. Otherwise, it returns `false`.
+
+### Rehashing a Value
+
+You can check if a hash needs to be rehashed and, if so, create a new hash with a different cost using the `needsRehash` method provided by the Lithe `Hash` security module.
+
+```php
+use Lithe\Support\Security\Hash;
+
+$needsRehash = Hash::needsRehash($hashedPassword, ['cost' => 12]);
+```
+If the hash needs to be rehashed, the method returns `true`. Otherwise, it returns `false`.
+
+To handle rehashing appropriately, it is recommended to check if the hash needs to be rehashed and, if necessary, create a new hash and update the stored hash.
+
+```php
+use Lithe\Support\Security\Hash;
+
+if (Hash::needsRehash($hashedPassword, ['cost' => 12])) {
+    $newHashedPassword = Hash::make($plainPassword, ['cost' => 12]);
+    // Update the stored hash in the database
+}
+```

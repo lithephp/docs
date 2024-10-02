@@ -1,0 +1,80 @@
+---
+title: Cache
+description: The `Cache` module in Lithe provides an efficient way to store and retrieve frequently accessed data, improving application performance by avoiding repeated operations on data that does not change often.
+---
+
+## Installation
+
+To install the `lithemod/cache` package, run:
+
+```bash
+composer require lithemod/cache
+```
+
+The source code is available at [github.com/lithemod/cache](http://github.com/lithemod/cache).
+
+## Storing and Retrieving Cached Data
+
+### Storing Data in Cache
+
+Use the `add` method to store data. This method takes a key, the data, the expiration time in seconds (default is 3600 seconds), and the serialization format (optional).
+
+```php
+use Lithe\Support\Cache;
+
+$app->post('/store-data', function ($req, $res) {
+    $data = $req->input('data');
+    $cacheKey = 'data_key';
+
+    Cache::add($cacheKey, $data);
+
+    $res->send('Data stored in cache.');
+});
+```
+
+### Retrieving Data from Cache
+
+Use the `get` method to retrieve data. It returns the stored data or `null` if not found.
+
+```php
+use Lithe\Support\Cache;
+
+$app->get('/get-data', function ($req, $res) {
+    $cacheKey = 'data_key';
+    $data = Cache::get($cacheKey) ?? 'Data not found in cache.';
+
+    $res->json(['data' => $data]);
+});
+```
+
+### Invalidating Cache Items
+
+Use the `invalidate` method to remove an item from the cache.
+
+```php
+use Lithe\Support\Cache;
+
+$app->post('/invalidate-cache', function ($req, $res) {
+    $cacheKey = 'data_key';
+
+    Cache::invalidate($cacheKey);
+
+    $res->send('Cache invalidated.');
+});
+```
+
+### Retrieving Data or Executing a Callback
+
+Use the `remember` method to try to retrieve data from the cache or execute a callback function if not found.
+
+```php
+use Lithe\Support\Cache;
+
+$app->get('/settings', function ($req, $res) {
+    $settings = Cache::remember('app_settings', function() {
+        return ['theme' => 'dark', 'language' => 'en'];
+    });
+
+    $res->json($settings);
+});
+```

@@ -140,11 +140,11 @@ use Lithe\Database\Manager as DB;
 DB::configure('my_custom_orm', function ($config) {
     // Custom configuration for your ORM or driver
     return new MyCustomORM([
-        'driver' => $config['driver'],
-        'host' => $config['host'],
-        'database' => $config['name'],
-        'username' => $config['username'],
-        'password' => $config['password'],
+        'driver' => $config->driver,
+        'host' => $config->host,
+        'database' => $config->name,
+        'username' => $config->username,
+        'password' => $config->password,
     ]);
 });
 ```

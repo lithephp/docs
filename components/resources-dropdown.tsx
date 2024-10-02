@@ -15,6 +15,10 @@ const NAVLINKS_RESOURCES = [
         title: "Middleware",
         href: '/resources/middleware',
     },
+    {
+        title: "Modules",
+        href: '/resources/modules',
+    },
 ];
 
 export function ResourcesDropdown() {

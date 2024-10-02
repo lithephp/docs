@@ -54,7 +54,7 @@ You can also create a new middleware using the `make:middleware` command:
 ```bash
 php line make:middleware EnsureTokenIsValid
 ```
-This command will place a new constant `EnsureTokenIsValid` within your application's `http/middleware` directory. In this middleware, we will only allow access to the route if the provided token matches a specified value. Otherwise, we will redirect users back to the initial URI:
+This command will place a new constant `EnsureTokenIsValid` within your application's `src/http/middleware` directory. In this middleware, we will only allow access to the route if the provided token matches a specified value. Otherwise, we will redirect users back to the initial URI:
 
 ```php
 use Lithe\Http\Request;
@@ -78,10 +78,10 @@ It is best to think of middleware as a series of "layers" that HTTP requests mus
 
 ## Loading Middleware
 
-To load a middleware function, you can call the `use()` method of the `\Lithe\App` class or use its shortcut, the `\Lithe\Orbs\Http\Router\apply` function, specifying the desired middleware function. For example, the following code loads the `myLogger` middleware function before executing the route for the root path (`/`):
+To load a middleware function, you can call the `use()` method of the `\Lithe\App` class, specifying the desired middleware function. For example, the following code loads the `myLogger` middleware function before executing the route for the root path (`/`):
 
 ```php {8}
-$app = \Lithe\App::mount();
+$app = new \Lithe\App;
 
 $myLogger = function ($req, $res, $next) {
     echo 'LOGGED';
@@ -117,7 +117,7 @@ Bind application-level middleware to an instance of the application object using
 
 The following example shows a middleware function without a mount path. The function is executed every time the application receives a request.
 ```php
-$app = \Lithe\App::mount();
+$app = new \Lithe\App;
 
 $app->use(function ($req, $res, $next) {
     echo 'Hello World!';
@@ -186,7 +186,7 @@ The following example illustrates loading session middleware, the function `\Lit
 ```php {5,6,7}
 use function Lithe\Middleware\Session\session;
 
-$app = \Lithe\App::mount();
+$app = new \Lithe\App;
 
 $app->use(session([
     'secure' => true
@@ -199,9 +199,8 @@ For a partial list of commonly used third-party middleware functions with Lithe,
 
 If you need your middleware to be configurable, export a function that accepts an array of options or other parameters, and then return the middleware implementation based on the input parameters.
 
-```php:my-middleware.php 
-<?php
-return function ($options) {
+```php
+function my_middleware($options) {
     return function ($req, $res, $next) use ($options) {
         // Middleware implementation based on the options array
         
@@ -213,7 +212,5 @@ return function ($options) {
 Now, the middleware can be used as shown below.
 
 ```php
-$mw = require(__DIR__ .'/my-middleware.php');
-
-$app->use($mw(['option1' => '1', 'option2' => '2']));
+$app->use(my_middleware(['option1' => '1', 'option2' => '2']));
 ```

@@ -192,3 +192,24 @@ description: The `Request` object in Lithe provides an object-oriented way to in
       // $email may be a valid email or 'default@example.com'
   });
   ```
+  
+### `method(): string`
+  - **Description:** Gets the HTTP method of the request (e.g., 'GET', 'POST').
+  - **Return:** The HTTP method of the request.
+  ```php
+  $app->get('/hello', function($req, $res) {
+      $method = $req->method(); 
+  });
+  ```
+
+### `param(string $name, mixed $default = null): mixed`
+  - **Description:** Retrieves the value of a parameter by its name.
+  - **Parameters:**
+    - `name` - The name of the parameter to retrieve.
+    - `default` - The default value to return if the parameter is not found.
+  - **Return:** The value of the parameter or the default value if the parameter is not found.
+  ```php
+  $app->get('/hello/:name', function($req, $res) {
+      $name = $req->param('name', 'default_name'); 
+  });
+  ```

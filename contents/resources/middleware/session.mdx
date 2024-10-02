@@ -1,129 +1,165 @@
 ---
 title: Session  
-description: The session middleware in Lithe manages user session configuration and control.  
+description: The session middleware in Lithe manages user session configuration and control.
 ---
 
-## Using the Session Middleware
+## Installing the Session Middleware  
 
-Lithe includes a session middleware to manage user sessions and their variables. To configure the middleware in your application, add it using the `use()` method:
+To install the Session middleware, use Composer:  
 
-```php
-use Lithe\Middleware\Session\session;
+```bash  
+composer require lithemod/session  
+```  
 
-$app->use(session());
-```
+You can find more information and the source code for the module at [github.com/lithemod/session](https://github.com/lithemod/session).  
 
-This ensures that the session is correctly initiated and configured for all requests.
+## Using the Session Middleware  
 
-### Configuring the Session Middleware
+Lithe includes a session middleware to manage user sessions and their variables. To configure the middleware in your application, add it using the `use()` method:  
 
-The session middleware can be configured with the following parameters:
+```php  
+use Lithe\Middleware\Session\session;  
 
-- **lifetime**: Defines the session's lifetime in seconds. The default is 2592000 seconds (30 days).
-- **domain**: Defines the domain for which the session cookie is valid. The default is `null`.
-- **secure**: Indicates if the session cookie should be sent only over secure (HTTPS) connections. The default is `false`.
-- **httponly**: Indicates if the session cookie should be accessible only through HTTP requests. The default is `true`.
-- **samesite**: Defines the SameSite attribute of the session cookie. It can be `'Lax'`, `'Strict'`, or `'None'`. The default is `'Lax'`.
-- **path**: Defines the path where session files will be stored. The default is `'storage/framework/session'`.
+$app->use(session());  
+```  
 
-Example configuration:
+This ensures that the session is correctly initiated and configured for all requests.  
 
-```php
-$app->use(Session([
-    'lifetime' => 3600,
-    'domain' => 'example.com',
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'Strict',
-    'path' => PROJECT_ROOT . '/storage/framework/session',
-]));
-```
+### Configuring the Session Middleware  
 
-### Using Session Variables
+The session middleware can be configured with the following parameters:  
 
-After configuration, you can access and manipulate session variables through the `Request` object. Here are some available methods:
+- **lifetime**: Defines the session's duration in seconds. The default is 2592000 seconds (30 days).  
+- **domain**: Defines the domain for which the session cookie is valid. The default is `null`.  
+- **secure**: Indicates if the session cookie should be sent only over secure (HTTPS) connections. The default is `false`.  
+- **httponly**: Indicates if the session cookie should be accessible only through HTTP requests. The default is `true`.  
+- **samesite**: Defines the SameSite attribute of the session cookie. It can be `'Lax'`, `'Strict'`, or `'None'`. The default is `'Lax'`.  
+- **path**: Defines the path where session files will be stored.  
 
-- **put(string $name, mixed $value): void**
+Example configuration:  
 
-  Sets a session variable.
+```php  
+$app->use(session([  
+    'lifetime' => 3600,  
+    'domain' => 'example.com',  
+    'secure' => true,  
+    'httponly' => true,  
+    'samesite' => 'Strict',  
+    'path' => '/../storage/framework/session',  
+]));  
+```  
 
-  ```php
-  $req->session->put('user', 'John Doe');
-  ```
+### Using Session Variables  
 
-- **get(string $name, mixed $default = null): mixed**
+After configuration, you can access and manipulate session variables through the `Request` object. Here are some examples:  
 
-  Retrieves the value of a session variable. Returns the default value if the variable is not set.
+#### Storing a Session Variable  
 
-  ```php
-  $user = $req->session->get('user');
-  ```
+To store a variable in the user's session, use the following code:  
 
-- **forget(mixed $name): void**
+```php  
+$app->get('/set-user', function ($req, $res) {  
+    $req->session->put('user', 'John Doe'); // Set the session variable  
+    return $res->send('User set in session!');  
+});  
+```  
 
-  Removes one or more session variables.
+#### Retrieving a Session Variable  
 
-  ```php
-  $req->session->forget('user');
-  ```
+To retrieve the value of a session variable, use:  
 
-- **destroy(): void**
+```php  
+$app->get('/get-session', function ($req, $res) {  
+    $user = $req->session->get('user', 'default_value');  
+    $res->send($user); // Display the user's name  
+});  
+```  
 
-  Destroys all session variables.
+#### Removing a Session Variable  
 
-  ```php
-  $req->session->destroy();
-  ```
+To remove a session variable, do:  
 
-- **isActive(): bool**
+```php  
+$app->get('/forget-session', function ($req, $res) {  
+    $req->session->forget('user'); // Remove the session variable  
+});  
+```  
 
-  Checks if the session is active.
+#### Destroying All Session Variables  
 
-  ```php
-  $isActive = $req->session->isActive();
-  ```
+To destroy all session variables, use:  
 
-- **regenerate(bool $deleteOldSession = true): bool**
+```php  
+$app->get('/destroy-session', function ($req, $res) {  
+    $req->session->destroy(); // Destroy all session variables  
+});  
+```  
 
-  Regenerates the session ID. If `$deleteOldSession` is `true`, the old session will be deleted.
+#### Checking if the Session is Active  
 
-  ```php
-  $req->session->regenerate();
-  ```
+To check if the session is active, use:  
 
-- **getId(): string|false**
+```php  
+$app->get('/is-session-active', function ($req, $res) {  
+    $isActive = $req->session->isActive(); // Check if the session is active  
+    $res->send($isActive ? 'The session is active.' : 'The session is not active.');  
+});  
+```  
 
-  Retrieves the current session ID.
+#### Regenerating the Session ID  
 
-  ```php
-  $sessionId = $req->session->getId();
-  ```
+To regenerate the session ID, do:  
 
-- **setId(string $sessionId): bool**
+```php  
+$app->get('/regenerate-session', function ($req, $res) {  
+    $req->session->regenerate(); // Regenerate the session ID  
+});  
+```  
 
-  Sets a new ID for the session.
+#### Retrieving the Session ID  
 
-  ```php
-  $req->session->setId('newSessionId');
-  ```
+To obtain the current session ID, use:  
 
-- **all(): array**
+```php  
+$app->get('/get-session-id', function ($req, $res) {  
+    $sessionId = $req->session->getId(); // Retrieve the session ID  
+    $res->send($sessionId); // Display the session ID  
+});  
+```  
 
-  Retrieves all session variables.
+#### Setting a New ID for the Session  
 
-  ```php
-  $allSessionData = $req->session->all();
-  ```
+To set a new ID for the session, do:  
 
-- **has(string|array $names): bool**
+```php  
+$app->get('/set-session-id', function ($req, $res) {  
+    $req->session->setId('newSessionId'); // Set a new ID for the session  
+});  
+```  
 
-  Checks if one or more session variables exist.
+#### Retrieving All Session Variables  
 
-  ```php
-  $hasUser = $req->session->has('user');
-  ```
+To obtain all session variables, use:  
 
-## Considerations
+```php  
+$app->get('/all-session-data', function ($req, $res) {  
+    $allSessionData = $req->session->all(); // Retrieve all session variables  
+    $res->send($allSessionData); // Display all session variables  
+});  
+```  
 
-- **Creating the Session Directory**: The middleware ensures that the directory for storing sessions exists. If it doesn't, it will be created.
-- **Error Handling**: If an error occurs during configuration or session initialization, the middleware will log it and continue execution.
+#### Checking the Existence of Session Variables  
+
+To check if one or more session variables exist, use:  
+
+```php  
+$app->get('/check-session', function ($req, $res) {  
+    $hasUser = $req->session->has('user'); // Check if the user variable exists  
+    $res->send($hasUser ? 'The user variable exists in the session.' : 'The user variable does not exist in the session.');  
+});  
+```  
+
+## Considerations  
+
+- **Creating the Session Directory**: The middleware ensures that the directory for storing sessions exists. If it does not exist, it will be created.  
+- **Error Handling**: If an error occurs during configuration or session initialization, the middleware will log it and continue execution.  

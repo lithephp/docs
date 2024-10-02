@@ -3,9 +3,19 @@ title: CORS
 description: The CORS (Cross-Origin Resource Sharing) middleware in Lithe configures CORS headers to allow or restrict access to resources from different origins.  
 ---
 
+## Installing the CORS Middleware
+
+To install the CORS middleware, use Composer:
+
+```bash
+composer require lithemod/cors
+```
+
+You can find more information and the source code for the module at [github.com/lithemod/cors](https://github.com/lithemod/cors).
+
 ## Using the CORS Middleware
 
-The CORS middleware in Lithe is responsible for configuring Cross-Origin Resource Sharing headers, allowing or restricting access to your application's resources from different origins. To configure it in your application, add it using the `use()` method:
+The CORS middleware in Lithe is responsible for configuring Cross-Origin Resource Sharing headers, allowing or restricting access to your application's resources from different origins. To configure it in your application, add it using the `use()` method on an instance of `\Lithe\App`:
 
 ```php
 use Lithe\Middleware\Configuration\cors;
@@ -17,11 +27,11 @@ $app->use(cors());
 
 The CORS middleware can be configured with the following parameters:
 
-- **origins**: Allowed origin(s) for accessing your resources. It can be a string or an array of strings. The default is `'*'` (any origin).
-- **methods**: Allowed HTTP methods. The default is `'GET, POST, OPTIONS'`.
-- **headers**: Allowed headers. It can be a string or an array of strings. The default is `'Origin, X-Requested-With, Content-Type, Accept'`.
-- **credentials**: Indicates if credentials (such as cookies or authorization headers) are allowed. The default is `true`.
-- **maxAge**: Time in seconds for caching the results of a preflight request. The default is `null`.
+- **origins**: Allowed origin(s) to access your resources. It can be a string or an array of strings. The default is '*' (any origin).
+- **methods**: Allowed HTTP methods. The default is 'GET, POST, OPTIONS'.
+- **headers**: Allowed headers. It can be a string or an array of strings. The default is 'Origin, X-Requested-With, Content-Type, Accept'.
+- **credentials**: Indicates whether credentials (such as cookies or authorization headers) are allowed. The default is true.
+- **maxAge**: Time in seconds to cache the results of a preflight request. The default is null.
 
 Example configuration:
 
@@ -37,15 +47,15 @@ $app->use(cors([
 
 ### Middleware Behavior
 
-- **Allowed Origins**: The middleware sets the `Access-Control-Allow-Origin` header with the allowed origins.
-- **Allowed Methods**: Sets the `Access-Control-Allow-Methods` header with the permitted HTTP methods.
-- **Allowed Headers**: Sets the `Access-Control-Allow-Headers` header with the allowed headers.
-- **Credentials**: Sets the `Access-Control-Allow-Credentials` header to allow credentials if configured as `true`.
-- **Cache Duration**: Sets the `Access-Control-Max-Age` header to specify the duration for caching preflight requests.
+- **Allowed Origins**: The middleware sets the Access-Control-Allow-Origin header with the allowed origins.
+- **Allowed Methods**: Sets the Access-Control-Allow-Methods header with the allowed HTTP methods.
+- **Allowed Headers**: Sets the Access-Control-Allow-Headers header with the allowed headers.
+- **Credentials**: Sets the Access-Control-Allow-Credentials header to allow credentials if configured as true.
+- **Cache Duration**: Sets the Access-Control-Max-Age header to specify the cache duration for the preflight request.
 - **Handling OPTIONS Requests**: The middleware handles OPTIONS (preflight) requests by returning a 200 OK status and terminating the response.
 
 ## Considerations
 
 - **Specific Origins**: If you specify concrete origins, only those origins will be able to access your resources.
-- **HTTP Methods and Headers**: Configure the methods and headers according to your application's needs to ensure security and compatibility.
-- **Preflight Requests**: The middleware ensures that OPTIONS requests are handled properly to support preflight requests.
+- **HTTP Methods and Headers**: Configure methods and headers according to your application’s needs to ensure security and compatibility.
+- **Preflight Requests**: The middleware ensures that OPTIONS requests are handled correctly to support preflight requests.

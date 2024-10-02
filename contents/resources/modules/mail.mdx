@@ -1,0 +1,140 @@
+---
+title: Mail
+description: The `Mail` module of Lithe simplifies sending emails. With a simple setup, you can send emails in plain text or HTML, add attachments, and customize various options.  
+---
+
+
+## Installation  
+
+To install the `lithemod/mail` package, open your terminal and run:  
+
+```bash  
+composer require lithemod/mail  
+```  
+
+The source code is available at [github.com/lithemod/mail](https://github.com/lithemod/mail).  
+
+## Environment Configuration  
+
+For email sending to work correctly, you need to configure the environment variables in the `.env` file at the root of your project. Add the following lines:  
+
+```
+MAIL_HOST=smtp.example.com  
+MAIL_PORT=587  
+MAIL_USERNAME=your_username  
+MAIL_PASSWORD=your_password  
+MAIL_ENCRYPTION=tls  
+MAIL_FROM_ADDRESS=no-reply@example.com  
+MAIL_FROM_NAME=YourApplicationName  
+```  
+
+### Variable Descriptions  
+
+- **`MAIL_HOST`**: The address of the SMTP server (e.g., `smtp.gmail.com`).  
+- **`MAIL_PORT`**: The SMTP server port (587 for TLS, 465 for SSL).  
+- **`MAIL_USERNAME`**: Your username for authentication on the server.  
+- **`MAIL_PASSWORD`**: Your password for authentication.  
+- **`MAIL_ENCRYPTION`**: The encryption method, which can be `tls` or `ssl`.  
+- **`MAIL_FROM_ADDRESS`**: The sender's email address.  
+- **`MAIL_FROM_NAME`**: The name that will appear as the sender.  
+
+---  
+
+## Using `Mail`  
+
+### Sending a Simple Plain Text Email  
+
+To send a simple email, you can use the following code:  
+
+```php  
+$app->get('/send-email', function ($req, $res) {  
+    $sent = Mail::to('recipient@domain.com', 'Recipient Name')  
+        ->subject('Email Subject')  
+        ->text('Body of the email in plain text')  
+        ->send();  
+
+    if ($sent) {  
+        $res->send('Email sent successfully!');  
+    } else {  
+        $res->send('Failed to send the email.');  
+    }  
+});  
+```  
+
+### Sending an HTML Email  
+
+To send an email with HTML formatting:  
+
+```php  
+$mail = Mail::to('recipient@domain.com', 'Recipient Name')  
+    ->subject('Email Subject')  
+    ->html('<h1>Body of the email in HTML</h1>')  
+    ->send();  
+```  
+
+### Adding CC and BCC Recipients  
+
+You can add people in CC (carbon copy) or BCC (blind carbon copy) like this:  
+
+#### Adding CC  
+
+```php  
+$mail = Mail::to('recipient@domain.com', 'Recipient Name')  
+    ->cc('cc@example.com', 'CC Name')  
+    ->subject('Email Subject')  
+    ->text('Body of the email in plain text')  
+    ->send();  
+```  
+
+#### Adding BCC  
+
+```php  
+$mail = Mail::to('recipient@domain.com', 'Recipient Name')  
+    ->bcc('bcc@example.com', 'BCC Name')  
+    ->subject('Email Subject')  
+    ->text('Body of the email in plain text')  
+    ->send();  
+```  
+
+### Setting the Reply-To Address  
+
+If you want replies to be sent to a specific address, use:  
+
+```php  
+$mail = Mail::to('recipient@domain.com', 'Recipient Name')  
+    ->replyTo('replyto@example.com', 'Reply Name')  
+    ->subject('Email Subject')  
+    ->text('Body of the email in plain text')  
+    ->send();  
+```  
+
+### Attaching Files  
+
+To add a file to the email, do it like this:  
+
+```php  
+$mail = Mail::to('recipient@domain.com', 'Recipient Name')  
+    ->subject('Email Subject')  
+    ->text('Body of the email in plain text')  
+    ->attach('/path/to/file.txt', 'CustomName.txt')  
+    ->send();  
+```  
+
+### Adding Custom Headers  
+
+To add extra information to the email, use custom headers:  
+
+```php  
+$mail = Mail::to('recipient@domain.com', 'Recipient Name')  
+    ->subject('Email Subject')  
+    ->text('Body of the email in plain text')  
+    ->addHeader('X-Custom-Header', 'HeaderValue')  
+    ->send();  
+```  
+
+---  
+
+## Troubleshooting  
+
+- **Check Settings**: Confirm that the environment variables are correct and that the SMTP server is accessible.  
+- **Check Logs**: Errors will be logged in the system logs, which can help identify issues.  

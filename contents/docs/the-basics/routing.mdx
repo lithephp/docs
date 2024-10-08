@@ -295,7 +295,7 @@ Create a router file named `birds.php` in the application directory with the fol
 
 ```php:birds.php showLineNumbers
 <?php
-use function Lithe\Orbs\Http\Router\{get, apply};
+use function Lithe\Orbis\Http\Router\{get, apply};
 
 // Specific middleware for this router
 $timeLog = function ($req, $res, $next) {
@@ -319,7 +319,7 @@ get('/about', function ($req, $res) {
 Then, load the router module into your application:
 
 ```php:App.php
-use function Lithe\Orbs\Http\Router\{router};
+use function Lithe\Orbis\Http\Router\{router};
 // ...
 
 $birds = router(__DIR__ .'/birds');

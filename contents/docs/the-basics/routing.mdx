@@ -243,94 +243,111 @@ $app->route('/book')
 
 ---
 
-## The `Lithe\Http\Router` Class
+## Creating Modular Routers
 
-Use the `Router` class from Lithe to create modular and mountable route handlers. An instance of `Router` is a complete system of middleware and routing; for this reason, it is often referred to as a "mini-application."
+The `Router` class in Lithe allows you to create modular and mountable route handlers. This provides a complete middleware and routing system, often referred to as a "mini-application." Let’s explore how to build and integrate a router into your application in a clear and organized manner.
 
-The following example creates a router as a module, loads a middleware function into it, defines some routes, and mounts the router module on a path in the main application.
+### Router Structure
+
+In this example, you will learn how to create a router as a separate module, configure middleware, define routes, and finally integrate the router module into your main application. This not only improves code organization but also facilitates maintenance and scalability.
 
 ### Classic Syntax
 
-Create a router file named `birds.php` in the application directory with the following content:
+#### 1. Creating the Router File
 
-```php:birds.php showLineNumbers
+Create a file named `birds.php` in your application's directory. This file will be responsible for defining routes related to birds.
+
+```php:src/birds.php
 <?php 
 
+// Instantiate the Router class
 $router = new \Lithe\Http\Router;
 
-// Specific middleware for this router
+// Middleware specific to this router
 $timeLog = function ($req, $res, $next) {
     echo 'Time: ' . date('Y-m-d');
-    $next();
+    $next(); // Calls the next middleware or route
 };
 
+// Apply the middleware to the router
 $router->use($timeLog);
 
 // Define the homepage route
 $router->get('/', function ($req, $res) {
-    $res->send('Birds homepage');
+    $res->send('Birds Homepage');
 });
 
-// Define the about route
+// Define the "About" route
 $router->get('/about', function ($req, $res) {
-    $res->send('About birds');
+    $res->send('About Birds');
 });
 
-return $router;
+return $router; // Returns the router for use in the main application
 ```
 
-Then, load the router module into your application:
+- **Middleware**: The `$timeLog` middleware logs the current date for each request. The `$next()` function ensures that the next step in the request processing is called, allowing the execution of the defined routes.
 
-```php:App.php
-$birds = require(__DIR__ .'/birds.php');
+#### 2. Integrating the Router into the Main Application
 
-// ...
+Now you need to load the router module into the main application. Open the `App.php` file and add the following code:
 
+```php:src/App.php
+$birds = require(__DIR__ . '/birds.php'); // Loads the birds router
+
+// Mount the router in the application at a specific path
 $app->use('/birds', $birds);
 ```
+
+- **Mounting**: The `$app->use('/birds', $birds)` function binds the loaded router to the `/birds` path of the application. This means that all requests to this path will be handled by the defined router.
 
 ### Functional Syntax
 
-Create a router file named `birds.php` in the application directory with the following content:
+Another way to structure your router is by using a functional approach, which can be more intuitive in some situations.
 
-```php:birds.php showLineNumbers
+- Each file is treated as a separate instance of the router, allowing you to organize your routes more intuitively.
+- With modularity, it’s easier to add new routers or modify existing ones without affecting other parts of the application.
+- Functions like `get` and `post` are specific to that file instance, aiding in code readability and maintenance.
+
+#### 1. Creating the Router File
+
+Create the `birds.php` file, but this time using a functional syntax:
+
+```php:src/birds.php 
 <?php
-use function Lithe\Orbs\Http\Router\{get, apply};
+use function Lithe\Orbis\Http\Router\{get, apply};
 
-// Specific middleware for this router
+// Middleware specific to this router
 $timeLog = function ($req, $res, $next) {
     echo 'Time: ' . date('Y-m-d');
-    $next();
+    $next(); // Calls the next middleware or route
 };
 
-apply($timeLog);
+apply($timeLog); // Applies the middleware to the router
 
 // Define the homepage route
 get('/', function ($req, $res) {
-    $res->send('Birds homepage');
+    $res->send('Birds Homepage');
 });
 
-// Define the about route
+// Define the "About" route
 get('/about', function ($req, $res) {
-    $res->send('About birds');
+    $res->send('About Birds');
 });
 ```
 
-Then, load the router module into your application:
+- Here, we use `apply($timeLog)` to apply the middleware while keeping the syntax simple and clear.
 
-```php:App.php
-use function Lithe\Orbs\Http\Router\{router};
-// ...
+#### 2. Integrating the Router into the Main Application
 
-$birds = router(__DIR__ .'/birds');
+As before, you need to load the router into the application:
 
-// ...
+```php:src/App.php
+use function Lithe\Orbis\Http\Router\{router};
 
+$birds = router(__DIR__ . '/birds'); // Loads the router
+
+// Mount the router in the application
 $app->use('/birds', $birds);
 ```
 
-Sure! Here’s the translation:
-
-"With the functional syntax, each file is treated as a separate instance of the router when using the `router` function. This means that functions like `get` and `post` are specific to that instance of the file, allowing you to organize your routes in a modular and intuitive way. This approach enhances the maintenance and clarity of the code. It's an amazing way to structure your code, don’t you think?"
-
-The application will now be able to handle requests to `/birds` and `/birds/about`, as well as invoke the `$timeLog` middleware function, which is specific to the route.
+Now, your application will be ready to handle requests for `/birds` and `/birds/about`, as well as invoke the `$timeLog` middleware, which is specific to the router.

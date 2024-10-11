@@ -24,7 +24,7 @@ If the current middleware function does not end the request-response cycle, it m
 
 The following code shows the elements of a middleware function call:
 ```php
-$app->get('/', function ($req, $res, $next) {
+$app->use('/', function ($req, $res, $next) {
     $next();
 });
 ```
@@ -80,9 +80,7 @@ It is best to think of middleware as a series of "layers" that HTTP requests mus
 
 To load a middleware function, you can call the `use()` method of the `\Lithe\App` class, specifying the desired middleware function. For example, the following code loads the `myLogger` middleware function before executing the route for the root path (`/`):
 
-```php {8}
-$app = new \Lithe\App;
-
+```php {6}
 $myLogger = function ($req, $res, $next) {
     echo 'LOGGED';
     $next();
@@ -117,8 +115,6 @@ Bind application-level middleware to an instance of the application object using
 
 The following example shows a middleware function without a mount path. The function is executed every time the application receives a request.
 ```php
-$app = new \Lithe\App;
-
 $app->use(function ($req, $res, $next) {
     echo 'Hello World!';
     $next();

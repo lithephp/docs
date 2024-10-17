@@ -67,7 +67,7 @@ export function Navbar() {
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5">
-      <h2 className="text-md font-bold">Lithe</h2>
+      <img src="/favicon.ico" alt="Lithe" width="32" height="32" /> Lithe <span className='text-sm text-slate-400'>v1.x</span>
     </Link>
   );
 }

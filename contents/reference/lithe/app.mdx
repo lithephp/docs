@@ -73,21 +73,3 @@ The `Lithe\App` class is the foundation for creating and managing an application
             $res->send('User List');
         });
     ```
-
-### `on(string $event, callable $handler): void`  
-- **Description:** Registers an event handler for a specific event.  
-- **Parameters:**  
-  - **`$event`** - Name of the event.  
-  - **`$handler`** - Handler function to be called when the event is emitted.  
-
-### `off(string $event, callable $handler): void`  
-- **Description:** Removes an event handler for a specific event.  
-- **Parameters:**  
-  - **`$event`** - Name of the event.  
-  - **`$handler`** - Handler function to be removed.  
-
-### `emit(string $event, ...$args): void`  
-- **Description:** Emits an event, calling all registered handlers for that event.  
-- **Parameters:**  
-  - **`$event`** - Name of the event.  
-  - **`...$args`** - Any additional arguments to be passed to the handlers.  

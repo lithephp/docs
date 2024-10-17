@@ -1,52 +1,81 @@
 ---
 title: Template Engines  
-description: Lithe offers flexibility by allowing you to choose from various template engines, such as pure PHP, Blade, and Twig. In addition to the default engines, you can configure others to optimize the creation and rendering of dynamic interfaces.
+description: Lithe offers flexibility by allowing you to choose from various template engines, such as pure PHP, Blade, and Twig. In addition to standard engines, you can configure others to optimize the creation and rendering of dynamic interfaces.
 ---
 
-## Configuring Lithe
+## Setting Up Lithe for Template Rendering
 
-To enable Lithe to render template files, you need to configure a few options in your application. Follow these steps:
+To enable Lithe to render template files, you need to configure some options in your application. Follow the steps below:
 
-### 1. Template Directory
+<Stepper>
+<StepperItem title="Templates Directory">
 
-Define the directory where the template files are located.
+First, define the directory where your template files are located. You can do this with the following code:
 
 ```php
 $app->set('views', __DIR__ . '/views');
 ```
 
-By default, Lithe uses the `src/views` directory at the root of the application to store template files.
+</StepperItem>
+<StepperItem title="Template Engine">
 
-### 2. Template Engine
-
-Configure the template engine to be used by Lithe.
+Next, configure the template engine that will be used by Lithe. For example, to use Blade, you should set:
 
 ```php
 $app->set('view engine', 'blade');
 ```
 
-Lithe is compatible with several popular template engines, such as Blade, Twig, and pure PHP. By default, Lithe uses pure PHP.
+</StepperItem>
+<StepperItem title="Package Installation">
 
-### 3. Package Installation
+After configuring the desired template engine, install the corresponding Composer package for the chosen engine to ensure everything works correctly.
 
-After configuring the template engine, install the corresponding Composer package for the chosen engine to ensure everything works correctly.
+</StepperItem>
+
+</Stepper>
 
 ---
 
 ## Using Template Engines
 
-### Using Pure PHP
+Lithe supports various template engines, such as native PHP, Blade, and Twig, offering flexibility in rendering views. To use one of these engines, follow these steps:
 
-To use pure PHP as the template engine:
+<Stepper>
+<StepperItem title="Define the template engine">
 
-**Step 1:** Set the template engine
-
+<Tabs defaultValue="default" className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="default">Native PHP</TabsTrigger>
+    <TabsTrigger value="blade">Blade</TabsTrigger>
+     <TabsTrigger value="twig">Twig</TabsTrigger>
+  </TabsList>
+  <TabsContent value="default">
 ```php
 $app->set('view engine', 'default');
 ```
+   </TabsContent>
+  <TabsContent value="blade">
+```php
+$app->set('view engine', 'blade');
+```
+  </TabsContent>
+  <TabsContent value="twig">
+```php
+$app->set('view engine', 'twig');
+```
+   </TabsContent>
+</Tabs>
 
-**Step 2:** Create a PHP template file
+</StepperItem>
+<StepperItem title="Create a Blade template file">
 
+<Tabs defaultValue="default" className="pt-5 pb-1">
+  <TabsList className="Create a template file">
+    <TabsTrigger value="default">Native PHP</TabsTrigger>
+    <TabsTrigger value="blade">Blade</TabsTrigger>
+     <TabsTrigger value="twig">Twig</TabsTrigger>
+  </TabsList>
+  <TabsContent value="default">
 In the `src/views` directory, create `index.php` with the content:
 
 ```html
@@ -56,25 +85,8 @@ In the `src/views` directory, create `index.php` with the content:
     </body>
 </html>
 ```
-
-### Using Blade
-
-To use Blade:
-
-**Step 1:** Install the package via Composer
-
-```bash
-composer require jenssegers/blade
-```
-
-**Step 2:** Set the template engine
-
-```php
-$app->set('view engine', 'blade');
-```
-
-**Step 3:** Create a Blade template file
-
+   </TabsContent>
+  <TabsContent value="blade">
 In the `src/views` directory, create `index.blade.php` with the content:
 
 ```html
@@ -84,25 +96,8 @@ In the `src/views` directory, create `index.blade.php` with the content:
     </body>
 </html>
 ```
-
-### Using Twig
-
-To use Twig:
-
-**Step 1:** Install the package via Composer
-
-```bash
-composer require twig/twig
-```
-
-**Step 2:** Set the template engine
-
-```php
-$app->set('view engine', 'twig');
-```
-
-**Step 3:** Create a Twig template file
-
+  </TabsContent>
+  <TabsContent value="twig">
 In the `src/views` directory, create `index.twig` with the content:
 
 ```html
@@ -112,6 +107,33 @@ In the `src/views` directory, create `index.twig` with the content:
     </body>
 </html>
 ```
+   </TabsContent>
+</Tabs>
+
+</StepperItem>
+
+<StepperItem title="Install the package via Composer">
+
+<Tabs className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="blade">Blade</TabsTrigger>
+     <TabsTrigger value="twig">Twig</TabsTrigger>
+  </TabsList>
+  <TabsContent value="blade">
+```bash
+composer require jenssegers/blade
+```
+  </TabsContent>
+  <TabsContent value="twig">
+```bash
+composer require twig/twig
+```
+   </TabsContent>
+</Tabs>
+
+</StepperItem>
+
+</Stepper>
 
 ### Rendering Templates
 
@@ -123,13 +145,15 @@ $app->get('/', function ($req, $res) {
 });
 ```
 
-To learn more about <a href="https://laravel.com/docs/blade" target="_blank">Blade</a> and <a href="https://twig.symfony.com/doc" target="_blank">Twig</a>, check the official documentation.
+To learn more about <a href="https://laravel.com/docs/blade" target="_blank">Blade</a> and <a href="https://twig.symfony.com/doc" target="_blank">Twig</a>, consult the official documentation.
+
+---
 
 ## Custom Template Engines
 
-> Note: This section contains advanced topics. If you prefer not to learn about this now, feel free to skip this section.
+> Note: This section contains advanced topics. If you do not wish to learn about this now, feel free to skip this section.
 
-Use the `engine` method from the `Lithe\App` class, to configure a template engine or create your own custom engine. This allows you to choose from available engines like Blade or Twig, or develop a custom solution to meet your specific needs, ensuring flexibility in rendering your application's template files.
+Use the `engine` method of the `Lithe\App` class to configure a template engine or to create your own custom engine. This allows you to choose between available engines, such as Blade or Twig, or to develop a specific solution that meets your needs, ensuring flexibility in rendering your application’s template files.
 
 ```php
 $app->engine($name, $callback);
@@ -137,12 +161,12 @@ $app->engine($name, $callback);
 
 Where:
 - `$name`: Name of the template engine.
-- `$callback`: Template engine configuration function (accepts the following items as parameters: the file location, options array, and the views path).
+- `$callback`: Function to configure the template engine (accepts the following items as parameters: the file location, the options array, and the views path).
 
 The following code is an example of implementing a very simple template engine called `lithe.view`.
 
 ```php
-// Defining the "lithe.view" template engine
+// Definition of the template engine "lithe.view"
 $app->engine('lithe.view', function ($file, $options, $views) {
     // Read the content of the template file
     $content = file_get_contents($views . '/' . $file . '.lithe.view');
@@ -156,7 +180,7 @@ $app->engine('lithe.view', function ($file, $options, $views) {
     echo $content;
 });
 
-// Configuring the template engine
+// Configure the template engine
 $app->set('view engine', 'lithe.view');
 ```
 
@@ -188,4 +212,4 @@ $app->get('/', function ($req, $res) {
 });
 ```
 
-When you request the homepage, the `index.lithe.view` file will be rendered as HTML.
+When you make a request to the homepage, the `index.lithe.view` file will be rendered as HTML.

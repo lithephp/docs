@@ -6,6 +6,7 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import rehypeCodeTitles from "rehype-code-titles";
+import { Stepper, StepperItem } from "@/components/markdown/stepper";
 
 // custom components imports
 import {
@@ -48,6 +49,8 @@ const components = {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Stepper, 
+  StepperItem
 };
 
 function getContentPath(slug: string, category: string) {

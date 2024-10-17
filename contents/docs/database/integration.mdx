@@ -1,11 +1,11 @@
 ---
 title: "Database Integration"
-description: Lithe offers flexibility in connecting to various databases. Integrating seamlessly with popular ORMs like Eloquent, Lithe also supports native PHP drivers such as MySQLi and PDO, ensuring broad compatibility with various database management systems.
+description: Lithe offers flexibility in connecting to different databases. Integrating seamlessly with popular ORMs like Eloquent, Lithe also supports native PHP drivers like MySQLi and PDO, ensuring broad compatibility with various database management systems.
 ---
 
-## Environment Configuration
+## Environment Setup
 
-To configure the database connection environment in Lithe, you can adjust the environment variables present in the `.env` file at the root of your project:
+To configure the database connection environment in Lithe, you can adjust the environment variables already present in the `.env` file at the root of your project:
 
 ```
 DB_CONNECTION_METHOD=pdo
@@ -19,126 +19,139 @@ DB_SHOULD_INITIATE=true
 
 **Where:**
 
-- **`DB_CONNECTION_METHOD`**: Defines the method of database connection used by Lithe. It can be configured to `eloquent`, `pdo`, `mysqli`, or other custom connection methods defined in your application.
+- **`DB_CONNECTION_METHOD`**: Defines the database connection method used by Lithe. It can be set to `eloquent`, `pdo`, `mysqli`, or other custom connection methods defined in the application.
 
-- **`DB_CONNECTION`**: Specifies the type of database that Lithe should connect to. For example, `mysql`, `pgsql`, `sqlite`, among others.
+- **`DB_CONNECTION`**: Specifies the type of database Lithe should connect to. For example, `mysql`, `pgsql`, `sqlite`, among others.
 
-- **`DB_HOST`**: Indicates the address of the server where the database is hosted. Typically set to `localhost` for local connections or an IP address for remote connections.
+- **`DB_HOST`**: Indicates the address of the server where the database is hosted. Usually set to `localhost` for local connections or an IP address for remote connections.
 
 - **`DB_NAME`**: The name of the database that Lithe should use to store application data.
 
-- **`DB_USERNAME`**: The username used to authenticate the connection to the database.
+- **`DB_USERNAME`**: The username used to authenticate the database connection.
 
-- **`DB_PASSWORD`**: The password associated with the username for authenticating the connection to the database. If left blank, it indicates that no password is configured for the specified user.
+- **`DB_PASSWORD`**: The password associated with the username to authenticate the database connection. If left empty, it indicates that no password is configured for the specified user.
 
-- **`DB_SHOULD_INITIATE`**: Indicates whether Lithe should automatically initiate the database connection when loading the application. Can be set to `true` for automatic initiation or `false` for manual initiation at specific points in the code.
+- **`DB_SHOULD_INITIATE`**: Indicates whether Lithe should automatically initiate the database connection when loading the application. It can be set to `true` for automatic initiation or `false` for manual initialization at specific points in the code.
 
-These configurations are crucial for establishing an effective and secure connection with the defined database, ensuring that Lithe can interact with application data appropriately during development and execution.
+These settings are crucial for establishing an effective and secure connection with the defined database, ensuring that Lithe can interact with application data appropriately during development and execution.
 
-Be sure to replace placeholders (`localhost`, `lithe`, `root`, and `empty password`) with your actual database credentials. It is highly recommended to set a strong password to protect your credentials and ensure the security of the database connection.
+Remember to replace the placeholders (`localhost`, `lithe`, `root`, and `empty password`) with your actual database credentials. It is highly recommended to set a strong password to protect your credentials and ensure the security of the database connection.
 
-### Configuration for Eloquent
+### Configuration
 
-To configure Lithe to use Eloquent, follow these steps:
+To configure Lithe to use different database connection methods, including PDO, MySQLi, or Eloquent, follow the steps below:
 
-**Step 1:** Set the environment variables in the `.env` file:
+<Stepper>
+<StepperItem title="Define the environment variables in the `.env` file">
 
-```bash
+<Tabs defaultValue="mysqli" className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="mysqli">MySQLi</TabsTrigger>
+    <TabsTrigger value="pdo">PDO</TabsTrigger>
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+  </TabsList>
+  <TabsContent value="eloquent">
+  ```bash {1}
 DB_CONNECTION_METHOD=eloquent
 DB_CONNECTION=mysql
+    ```
+   </TabsContent>
+  <TabsContent value="mysqli">
+  ```bash {1}
+DB_CONNECTION_METHOD=mysqli
+DB_CONNECTION=mysql
+    ```
+  </TabsContent>
+  <TabsContent value="pdo">
+  ```bash {1}
+DB_CONNECTION_METHOD=pdo
+DB_CONNECTION=mysql
 ```
+   </TabsContent>
+</Tabs>
 
-**Step 2:** Install Eloquent using Composer:
+</StepperItem>
+<StepperItem title="Install the corresponding package using Composer">
 
+<Tabs className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+  </TabsList>
+  <TabsContent value="eloquent">
 ```bash
 composer require illuminate/database
 ```
+   </TabsContent>
+</Tabs>
 
-Learn more about Eloquent at: [Complete Eloquent Documentation](https://laravel.com/docs/eloquent)
+</StepperItem>
 
-### Configuration for MySQLi
+</Stepper>
 
-To configure Lithe to use MySQLi, set the environment variables as follows:
-
-**Step 1:** Configure the environment variables in the `.env` file:
-
-```bash
-DB_CONNECTION_METHOD=mysqli
-DB_CONNECTION=mysql
-```
-
-Learn more about MySQLi in the PHP documentation: [PHP Manual - MySQLi](https://www.php.net/manual/en/book.mysqli.php)
-
-These detailed steps make it easy to configure each ORM or database driver with Lithe, allowing you to choose and set up the most suitable connection method for your application.
+These detailed steps simplify the configuration of each ORM or database driver with Lithe, allowing you to choose and set up the most suitable connection method for your application.
 
 ---
 
-## Connection Initialization
+## Establishing Connection with the Database
 
-After configuring the `.env` file with the necessary database connection variables, Lithe uses the `Manager` class to load these configurations and establish the corresponding connection.
+After configuring the `.env` file with the necessary variables for connecting to the database, Lithe uses the `Manager` class not only to load these settings but also to establish and manage the corresponding connection.
 
-### `\Lithe\Database\Manager` Class and `initialize` Method
+### Connection Management with the `Manager` Class
 
-The `Manager` class in Lithe is a component responsible for managing database connection operations. It provides a crucial method called `initialize`, which initializes and returns the configured connection, ready to be used by the application.
+The `Manager` class in Lithe is a fundamental component for managing database connection operations. It provides a crucial method called `initialize`, which establishes the connection, and the method `connection`, which returns the configured connection, ready to be used by the application.
 
-The `initialize` method prepares and establishes the connection as configured by the environment variables. This includes setting up the connection type (`eloquent`, `pdo`, `mysqli`) and specific database details (such as host, database name, username, and password).
+The `initialize` method prepares and establishes the connection according to the environment variables. This includes setting the connection type (`eloquent`, `pdo`, `mysqli`) and the specific database details (such as host, database name, username, and password).
 
 #### Using the `initialize` Method
 
-In the `src/database/config/database.php` file, the `initialize` method is called by default to configure the database connection:
+In the file `src/database/config/database.php`, the `initialize` method is already called by default to configure the database connection:
 
 ```php
 use Lithe\Database\Manager as DB;
 
-return DB::initialize();
+DB::initialize();
 ```
 
-This method returns the configured connection, ready to be used by the application. It is essential that this method is present and called to ensure that the connection is available for database operations like migrations.
+It is essential that this method is present and called to ensure that the connection is available for operations such as database migrations.
 
-### Application Usage
+### Integrating the Connection in the Application
 
-After initializing the connection using the static `initialize()` method of the `Manager` class, the configured connection will be available via the `DB_CONNECTION` constant. This allows you to execute database queries and operations efficiently and securely.
+After initializing the connection using the static method `initialize()` of the `Manager` class, the configured connection will be accessible through the static method `connection`. This enables efficient and secure execution of queries and database operations.
 
-Using Eloquent for queries:
-
-```php
-use Illuminate\Database\Capsule\Manager as Database;
-
-$users = Database::table('users')->get();
-```
-
-Using conventional methods with PDO:
+#### Using Conventional Methods with PDO:
 
 ```php
-$pdo = DB_CONNECTION;
+use Lithe\Database\Manager as DB;
+
+$pdo = DB::connection();
 $users = $pdo->query('SELECT * FROM users')->fetchAll(PDO::FETCH_ASSOC);
 ```
 
-This approach facilitates Lithe's integration with different database technologies, providing flexibility and efficiency in web application development.
+This approach facilitates the integration of Lithe with different database technologies, providing flexibility and efficiency in web application development.
 
 ---
 
 ## Configuring Other ORMs or Drivers
 
-To use other ORMs or database drivers with Lithe, you can configure them flexibly using the static `configure` method of the `Lithe\Database\Manager` class in the `src/database/config/database.php` file. This method allows you to add new connection configurations in a customized manner.
+To use other ORMs or database drivers with Lithe, you can flexibly configure them using the static method `configure` of the class `Lithe\Database\Manager` in the file `src/database/config/database.php`. This method allows you to add new connection configurations in a customized manner.
 
 ### Structure of the `configure` Method
 
 The `configure` method takes two parameters:
 
-1. **Configuration Name**: A unique identifier for your configuration, which will be used later to reference this connection.
+1. **Configuration Name**: A unique identifier for your configuration that will be used later to reference this connection.
 
-2. **Configuration Callback**: A callback function that receives a configuration array as a parameter. Inside the callback, you can define and return the configured instance of your ORM or database driver.
+2. **Configuration Callback**: A callback function that receives a configuration object as a parameter. Inside the callback, you can define and return the configured instance of your ORM or database driver.
 
 ### Custom Configuration
 
-In the `src/database/config/database.php` file, add a custom configuration as follows:
+In the file `src/database/config/database.php`, add a custom configuration as follows:
 
 ```php
 use Lithe\Database\Manager as DB;
 
 DB::configure('my_custom_orm', function ($config) {
-    // Custom configuration for your ORM or driver
+    // Specific configuration for your ORM or driver
     return new MyCustomORM([
         'driver' => $config->driver,
         'host' => $config->host,
@@ -149,11 +162,11 @@ DB::configure('my_custom_orm', function ($config) {
 });
 ```
 
-In the example above, `my_custom_orm` is the name of the configuration you are creating. The callback receives a `$config` array containing the connection details (such as connection type, host, database name, username, and password), which are used to initialize and return the instance of your custom ORM or database driver.
+In the example above, `my_custom_orm` is the name of the configuration you are creating. The callback receives an array `$config` containing the connection details (such as connection type, host, database name, username, and password), which are used to initialize and return the instance of your custom ORM or database driver.
 
 ### Integration with Environment Variables
 
-After configuring the `configure` method in the `database.php` file, you need to associate the specific database details with environment variables in the `.env` file.
+After configuring the `configure` method in the `database.php` file, you need to associate the specific database details with the environment variables in the `.env` file.
 
 ```
 DB_CONNECTION_METHOD=my_custom_orm
@@ -164,18 +177,18 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-After setting up the `.env`, Lithe will automatically load these environment variables during application initialization. The Lithe `Manager` class will use these configurations to initialize and establish the connection to the database as configured.
+Once the `.env` file is configured, Lithe will automatically load these environment variables during the application startup. The `Manager` class of Lithe will use these settings to initialize and establish the connection to the database as configured.
 
-This process ensures that the configuration defined in the `configure` method is used in conjunction with environment variables, providing flexibility and efficient management of custom connections in your Lithe project.
+This process ensures that the configuration defined in the `configure` method is used in conjunction with the environment variables, providing flexibility and efficient management of custom connections in your Lithe project.
 
 ---
 
 ## Troubleshooting
 
-If you encounter issues connecting to the database:
+If you encounter difficulties connecting to the database:
 
-- Check if the configurations and environment variables are correct.
-- Verify for any syntax errors in your queries or SQL code.
+- Check if the settings and environment variables are correct.
+- Look for possible syntax errors in your queries or SQL code.
 
 ---
 

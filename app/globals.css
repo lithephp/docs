@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -169,4 +168,8 @@ pre>code {
 
 .highlight-comp>code {
   background-color: transparent !important;
+}
+
+.font-jetbrains-mono {
+  font-family: 'JetBrains Mono';
 }

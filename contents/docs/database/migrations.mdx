@@ -1,18 +1,18 @@
 ---
 title: Migrations
-description: "Migrations are like version control for your database. They allow your team to define and share the application's database schema. If you've ever had to ask a colleague to manually add a column to your local database after updating your version control changes, you've faced the problem that database migrations solve."
+description: "Migrations are like version control for your database. They allow your team to define and share the structure of the application database. If you've ever had to ask a colleague to manually add a column to your local database after updating your version control changes, you've encountered the problem that database migrations solve."
 ---
 
 ## Generating Migrations
 
-You can use the `make:migration` Line command to generate a database migration. The new migration will be placed in the `database/migrations` directory of your project. Each migration file name contains a timestamp that allows Lithe to determine the order of migrations.
+You can use the `make:migration` command to generate a database migration. The new migration will be placed in the `src/database/migrations` directory of your project. Each migration filename contains a timestamp that allows Lithe to determine the order of the migrations.
 
 ```bash
 php line make:migration MigrationName --template=TemplateName
 ```
 **Where:**
-- **`MigrationName`**: The name of the migration to be created.
-- **`--template=TemplateName`**: Optional. Defines the template to be used for generating the migration. If not specified, the template defined in the `DB_CONNECTION_METHOD` environment variable will be used.
+- `MigrationName`: Name of the migration to be created.
+- `--template=TemplateName`: Optional. Specifies the template to be used for generating the migration. If not specified, the template defined in the `DB_CONNECTION_METHOD` environment variable will be used.
 
 ### Migration Templates
 
@@ -22,25 +22,33 @@ Migration templates determine how migration files are generated, adapted for dif
 - **mysqli**: Template for migrations using MySQLi.
 - **default**: Default template for custom or generic migrations.
 
-To implement migrations in Lithe using different templates like Eloquent or MySQLi, it’s important to understand how each works and how to create corresponding migration files.
+To implement migrations in Lithe using different templates like Eloquent or MySQLi, it's important to understand how each of them works and how to create the corresponding migration files.
 
-### Migration with Eloquent
+### Database Migration
 
-Eloquent is a popular ORM within the PHP ecosystem, widely used for interacting with relational databases in a simplified manner. Here’s how you can create a migration for the `users` table:
+Lithe supports various forms of migration to manage databases efficiently and simplistically. Here is an example of how to create a migration for the `users` table, regardless of which ORM or connection method is being used:
 
-1. **Creating the Migration**
+<Stepper>
+<StepperItem title="Creating the Migration">
 
-Run the following command to create a migration using the Eloquent template:
+Run the following command to create a migration:
 
 ```bash
-php line make:migration CreateUsersTable --template=eloquent
+php line make:migration CreateUsersTable
 ```
 
-This will create a migration file in the `src/database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
+This will create a migration file inside the `src/database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
 
-2. **Example Migration File (Eloquent)**
+</StepperItem>
+<StepperItem title="Example Migration File">
 
-```php
+<Tabs className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+    <TabsTrigger value="mysqli">MySQLi</TabsTrigger>
+  </TabsList>
+  <TabsContent value="eloquent">
+  ```php
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
@@ -71,25 +79,10 @@ return new class
         Capsule::schema()->dropIfExists('users');
     }
 };
-```
-
-### Migration with MySQLi
-
-To use MySQLi directly, without a specific ORM like Eloquent, you need to manage migrations manually at the SQL level. Here’s a basic example to create the `users` table:
-
-1. **Creating the Migration**
-
-Run the command to create a migration:
-
-```bash
-php line make:migration CreateUsersTable --template=mysqli
-```
-
-This will create a migration file in the `src/database/migrations/` directory. For example, `YYYY_MM_DD_HHMMSS_CreateUsersTable.php`.
-
-2. **Example Migration File (MySQLi)**
-
-```php
+    ```
+   </TabsContent>
+  <TabsContent value="mysqli">
+  ```php
 return new class
 {
     /**
@@ -126,49 +119,20 @@ return new class
     }
 };
 ```
+  </TabsContent>
+</Tabs>
 
-### Migration with the Default Template
+</StepperItem>
 
-If you are using an ORM that does not have a specific template or any other database approach, Lithe provides a default migration template. This template is designed to be flexible, accepting the database connection as an argument.
-
-#### Example Migration File (Default Template)
-
-```php
-<?php 
-
-return new class
-{
-    /**
-     * Run the migrations.
-     *
-     * @param mixed $connection Database connection configuration.
-     * @return void
-     */
-    public function up(): void
-    {
-        // Migration logic
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @param mixed $connection Database connection configuration.
-     * @return void
-     */
-    public function down(): void
-    {
-        // Rollback logic
-    }
-};
-```
+</Stepper>
 
 ---
 
 ## Running Migrations
 
-After creating the migration files as described above, you need to execute them to apply changes to the database.
+After creating the migration files as shown in the examples above, you need to run them to apply the changes to the database.
 
-To run all pending migrations, use the command:
+To run all your pending migrations, use the command:
 
 ```bash
 php line migrate
@@ -176,27 +140,27 @@ php line migrate
 
 #### Rolling Back Migrations
 
-To roll back the last migration operation, use the Line `rollback` command. This command rolls back the last 'batch' of migrations, which may include multiple migration files.
+To roll back the last migration operation, you can use the `rollback` command from Line. This command rolls back the last 'batch' of migrations, which may include multiple migration files.
 
 ```bash
 php line migrate:rollback
 ```
 
-You can roll back a specific migration batch by providing the `batch` option to the rollback command, where the `batch` option corresponds to a "batch" value within your application's migration table. For example, the following command will roll back all migrations in the third batch:
+You can roll back a specific "batch" of migrations by providing the `batch` option to the rollback command, where the `batch` option corresponds to a "batch" value in your application's migration table. For example, the following command will roll back all migrations in "batch" three:
 
 ```bash
 php line migrate:rollback --batch=3
 ```
 
-This will roll back all migrations that were grouped in the third batch.
+This will roll back all migrations that were grouped in the third "batch."
 
-Using the `migrate:reset` command will roll back all migrations in your application:
+Using the `migrate:reset` command, all migrations in your application will be rolled back:
 
 ```bash
 php line migrate:reset
 ```
 
-##### **Rollback and Migrate with a Single Command**
+##### **Rollback and Migrate Using a Single Command**
 
 The `migrate:refresh` command will roll back all your migrations and then run the `migrate` command. This effectively recreates your entire database:
 
@@ -206,4 +170,4 @@ php line migrate:refresh
 
 ---
 
-Managing database migrations is crucial for maintaining the integrity and evolution of data structures throughout an application's lifecycle. By using migrations in Lithe, you gain full control over these changes, simplifying the development and maintenance of your project.
+Managing database migrations is essential for maintaining the integrity and evolution of data structures throughout the lifecycle of an application. By using migrations in Lithe, you gain full control over these changes, facilitating the development and maintenance of your project.

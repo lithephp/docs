@@ -22,9 +22,32 @@ Lithe supports different templates for models, adapted for various ORMs or datab
 - **eloquent**: Template for models using the Eloquent ORM.
 - **plain**: Default template for custom or generic models.
 
-### Model File (Eloquent)
+### Model File
 
-When creating a model using the Eloquent template, you can follow this basic example for a user model:
+<Tabs defaultValue="plain" className="pt-5 pb-1">
+  <TabsList className="">
+    <TabsTrigger value="plain">Plain</TabsTrigger>
+    <TabsTrigger value="eloquent">Eloquent</TabsTrigger>
+  </TabsList>
+  <TabsContent value="plain">
+For models without a specific ORM, you can use the plain template and implement the model logic as needed:
+
+```php
+namespace App\Models;
+
+class User
+{
+    public $id;
+    public $name;
+    public $email;
+
+    // Your model logic goes here
+}
+```
+   </TabsContent>
+  <TabsContent value="eloquent">
+
+When creating a model using the Eloquent template, you can follow this basic example for a model:
 
 ```php
 namespace App\Models;
@@ -42,29 +65,15 @@ class User extends Model
     // Your model logic goes here
 }
 ```
+   </TabsContent>
+</Tabs>
 
-### Model File (Plain)
-
-For models without a specific ORM, you can use the plain template and implement the model logic as needed:
-
-```php
-namespace App\Models;
-
-class User
-{
-    public $id;
-    public $name;
-    public $email;
-
-    // Your model logic goes here
-}
-```
 
 ---
 
 ## Automatic Model Usage
 
-In Lithe, models located in `models` are automatically available for use throughout the application without the need for explicit imports in your files.
+In Lithe, models located in `src/models/` are automatically available for use throughout the application without the need for explicit imports in your files.
 
 Suppose you have an Eloquent model `User` defined in `src/models/User.php`. You can use it directly in your routes without any manual inclusion:
 
@@ -78,12 +87,11 @@ $app->get('/users/:id=int', function ($req, $res) {
     $user = User::find($id);
 
     if (!$user) {
-        return $res->status(404)
-            ->json(['error' => 'User not found']);
+        $res->status(404)->json(['error' => 'User not found']);
     }
 
     // Return user data as JSON, for example
-    return $res->json($user);
+    $res->json($user);
 });
 ```
 

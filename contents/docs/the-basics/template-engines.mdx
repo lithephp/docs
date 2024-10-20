@@ -161,13 +161,13 @@ $app->engine($name, $callback);
 
 Where:
 - `$name`: Name of the template engine.
-- `$callback`: Function to configure the template engine (accepts the following items as parameters: the file location, the options array, and the views path).
+- `$callback`: Function to configure the template engine (accepts the following items as parameters: the file location, the views path, and options array).
 
 The following code is an example of implementing a very simple template engine called `lithe.view`.
 
 ```php
 // Definition of the template engine "lithe.view"
-$app->engine('lithe.view', function ($file, $options, $views) {
+$app->engine('lithe.view', function ($file, $views, $options) {
     // Read the content of the template file
     $content = file_get_contents($views . '/' . $file . '.lithe.view');
 

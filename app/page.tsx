@@ -32,10 +32,6 @@ export default function Home() {
           API Reference
         </Link>
       </div>
-      <span className="flex flex-row items-center gap-2 text-zinc-400 text-md mt-7 -mb-12 max-[800px]:mb-12 font-jetbrains-mono">
-        <TerminalSquareIcon className="w-5 h-5 mr-1 mt-0.5" />
-        {"composer create-project lithephp/lithephp example-app"}
-      </span>
     </div>
   );
 }

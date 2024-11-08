@@ -348,3 +348,68 @@ In this example, you will learn how to create a router as a separate module, con
 </Tabs>
 
 Now, your application will be ready to handle requests to `/birds` and `/birds/about`, in addition to invoking the `$timeLog` middleware, which is specific to the router. A router can contain other routers, allowing for a hierarchical structure that better organizes the routes and functionalities of the application. Just like in the main application, routers are mounted in the same way, facilitating modularization and code maintenance. This promotes better scalability and clarity in organizing routes.
+
+---
+
+## Organizing Your Routes in a Modular and Automatic Way
+
+The `set('routes', ...)` method simplifies route registration, making the code cleaner and more organized. With it, you only need to structure your route folders and files, and the system will automatically build them for you.
+
+### How It Works
+
+When you use `set('routes', ...)`, the system automatically locates and loads all PHP files within the specified folder (and subfolders). The routes are built based on the folder structure, and each file represents a route with its own path:
+
+- If you have a file `cart.php`, it will create the route `/cart`.
+- The file `admin/dashboard.php` will create the route `/admin/dashboard`.
+
+Within the routes directory, the `index.php` file is always interpreted as the main route of a folder. For example, if you have an `index.php` file in the routes directory, it will be mapped to the route `/`, representing the root of the application.
+
+However, when using subfolders like `panel/index.php`, the system will not map it to the route `/panel`, but rather to `/panel/index`. To ensure that the route is correctly mapped to `/panel`, you should name the file as `panel.php` (without `index.php`), like this:
+
+- `index.php` → maps to the route `/`
+- `panel.php` → maps to the route `/panel`
+
+This approach helps avoid route conflicts and makes the file structure clearer and more intuitive.
+
+### Configuration
+
+#### Directory Structure:
+
+```
+/routes
+    cart.php
+    checkout.php
+    /admin
+        dashboard.php
+        users.php
+```
+
+#### Defining Routes in the Files:
+
+In each file, you can define your routes using the code style you prefer, either the **functional syntax** or the **classic syntax**.
+
+**File `cart.php`:**
+
+```php
+get('/', function ($req, $res) { 
+  $res->send('Cart'); 
+});
+```
+
+**File `admin/dashboard.php`:**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Admin Dashboard'); 
+});
+```
+
+### Application Configuration
+
+To define the path for your routes and enable automatic loading, just add the following configuration in your application:
+
+```php
+$app->set('routes', __DIR__ . '/routes');  // Defines the path and automatically loads routes
+```
+
+The directory structure makes it easier to visualize and maintain routes. Just organize your folders and files, and let the system manage the paths.

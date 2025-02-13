@@ -17,9 +17,9 @@ export function LanguageToggle() {
   const changeLanguage = (lang: string) => {
     setLanguage(lang);
     if (lang === "en") {
-      window.location.href = "https://lithephp.vercel.app/";
+      window.location.href = "https://lithephp.rialse.com/";
     } else if (lang === "pt") {
-      window.location.href = "https://pt-lithephp.vercel.app/";
+      window.location.href = "https://pt.lithephp.rialse.com/";
     }
   };
 

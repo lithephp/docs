@@ -353,23 +353,18 @@ Now, your application will be ready to handle requests to `/birds` and `/birds/a
 
 ## Organizing Your Routes in a Modular and Automatic Way
 
-The `set('routes', ...)` method simplifies route registration, making the code cleaner and more organized. With it, you only need to structure your route folders and files, and the system will automatically build them for you.
+The `set('routes', ...)` method simplifies route registration, making your code cleaner and more organized. With this method, you only need to structure your route folders and files, and the system will automatically handle the rest.
 
 ### How It Works
 
-When you use `set('routes', ...)`, the system automatically locates and loads all PHP files within the specified folder (and subfolders). The routes are built based on the folder structure, and each file represents a route with its own path:
+When you use `set('routes', ...)`, the system automatically locates and loads all PHP files within the specified folder (and subfolders). Routes are constructed based on the directory structure, and each file acts as a main router with its own path:
 
-- If you have a file `cart.php`, it will create the route `/cart`.
-- The file `admin/dashboard.php` will create the route `/admin/dashboard`.
+- If you have a **.php** file at the root of the routes directory (e.g., `.php`), it will create the `/` route.
+- If you have a **.php** file within a folder, such as `cart/.php`, it will create the `/cart` route.
+- Files located within the same folder as the main router will be mounted to it, forming sub-routes. For example, if there is a `dest.php` file inside `cart/`, it will be integrated into the `cart/.php` router, creating the `/cart/dest` route.
+- Similarly, if there is a subfolder such as `cart/dest/` containing a **.php** file (or other files), it will be mounted as a router for the `/cart/dest` route, and all files inside will be integrated into this router.
 
-Within the routes directory, the `index.php` file is always interpreted as the main route of a folder. For example, if you have an `index.php` file in the routes directory, it will be mapped to the route `/`, representing the root of the application.
-
-However, when using subfolders like `panel/index.php`, the system will not map it to the route `/panel`, but rather to `/panel/index`. To ensure that the route is correctly mapped to `/panel`, you should name the file as `panel.php` (without `index.php`), like this:
-
-- `index.php` → maps to the route `/`
-- `panel.php` → maps to the route `/panel`
-
-This approach helps avoid route conflicts and makes the file structure clearer and more intuitive.
+With this approach, the middlewares and configurations defined in the main router of each directory will automatically apply to all child routes.
 
 ### Configuration
 
@@ -377,22 +372,56 @@ This approach helps avoid route conflicts and makes the file structure clearer a
 
 ```
 /routes
-    cart.php
+    .php              // Main router for the application (route "/")
     checkout.php
+    /cart
+        .php          // Main router for the "/cart" module
+        dest.php      // Mounted on the /cart router (route "/cart/dest")
+        other.php     // Mounted on the /cart router (route "/cart/other")
     /admin
-        dashboard.php
-        users.php
+        dashboard.php // Creates the route "/admin/dashboard"
+        users.php     // Mounted on the router for /admin/users
 ```
 
-#### Defining Routes in the Files:
+#### Defining Routes in Files:
 
-In each file, you can define your routes using the code style you prefer, either the **functional syntax** or the **classic syntax**.
+In each file, you can define your routes using the style of your choice, either **functional syntax** or **classic syntax**.
 
-**File `cart.php`:**
+**File `.php` (at the root of `/routes`):**
 
 ```php
-get('/', function ($req, $res) { 
-  $res->send('Cart'); 
+$router->get('/', function ($req, $res) { 
+  $res->send('Welcome to the application!');
+});
+```
+
+**File `checkout.php`:**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Checkout Page'); 
+});
+```
+
+**File `.php` inside `/cart` (routes/cart/.php):**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Cart Page'); 
+});
+
+// Middlewares applied to all routes within the /cart module
+$router->use(function ($req, $res, $next) {
+  // Verification or authentication logic
+  $next();
+});
+```
+
+**File `dest.php` inside `/cart`:**
+
+```php
+$router->get('/', function ($req, $res) { 
+  $res->send('Cart Details');
 });
 ```
 
@@ -403,6 +432,15 @@ $router->get('/', function ($req, $res) {
   $res->send('Admin Dashboard'); 
 });
 ```
+
+---
+
+This approach allows the system to:
+- Automatically locate and load all PHP router files in the routes folder and subfolders.
+- Map routers hierarchically so that **.php** files in each directory act as the main routers.
+- Mount files and subfolders as sub-routes for the main routers, ensuring that middlewares defined in these routers apply to all child routes.
+
+By following this convention, you can structure your folders and files, and the system will automatically assemble the routes, keeping your code cleaner, more modular, and well-organized.
 
 ### Application Configuration
 

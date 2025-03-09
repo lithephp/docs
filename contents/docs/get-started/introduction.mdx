@@ -10,17 +10,17 @@ description: Welcome to Lithe, a PHP framework that offers simplicity, flexibili
 See how simple it is to create a route that fetches a user by ID:
 
 ```php
-get('/users/:id', function ($req, $res) {
+get('/users/:id', function ($req) {
     $id = $req->param('id');
     $user = User::find($id);
     
     if (!$user) {
-        return $res->status(404)->json([
+        return response()->status(404)->json([
             'error' => 'User not found'
         ]);
     } 
 
-    return $res->view('profile', compact('user'));
+    return view('profile', compact('user'));
 });
 ```
 
@@ -33,8 +33,8 @@ In this example, when accessing the route `/users/:id`, Lithe retrieves the corr
 **With Lithe, defining routes is as easy as breathing!** Use functions like `get()`, `post()`, among others, to create routes that respond to different types of HTTP requests in an intuitive and expressive manner:
 
 ```php
-get('/hello/:name', function ($req, $res) {
-    $res->send('Hello, ' . $req->param('name'));
+get('/hello/:name', function ($req) {
+    response()->send('Hello, ' . $req->param('name'));
 });
 ```
 
@@ -61,8 +61,8 @@ $EnsureTokenIsValid = function ($req, $res, $next) {
 };
 
 // Protected route using the middleware
-get('/protected/:token', $EnsureTokenIsValid, function ($req, $res) {
-    $res->send('Protected content accessed successfully!');
+get('/protected/:token', $EnsureTokenIsValid, function ($request) {
+    $response()->send('Protected content accessed successfully!');
 });
 ```
 

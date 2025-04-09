@@ -10,22 +10,16 @@ description: Welcome to Lithe, a PHP framework that offers simplicity, flexibili
 See how simple it is to create a route that fetches a user by ID:
 
 ```php
-// Defines a GET route that accepts a user ID in the URL
 get('/users/:id', function (Request $req) {
-    // Retrieves the user ID from the URL parameters
     $id = $req->param('id');
-    
-    // Searches for the user in the database by the ID
     $user = User::find($id);
     
-    // If the user is not found, returns a response with a 404 status and an error message
     if (!$user) {
         return response()->status(404)->json([
             'error' => 'User not found'
         ]);
     } 
 
-    // If the user is found, loads the profile page with the user data
     return view('profile', compact('user'));
 });
 ```

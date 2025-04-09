@@ -25,11 +25,11 @@ class UserController
     /**
      * Show the profile of a specific user.
      */
-    public static function show($req, $res)
+    public function show($req)
     {
         $id = $req->param('id');
         
-        return $res->view('user.profile', [
+        return view('user.profile', [
             'user' => User::findOrFail($id)
         ]);
     }
@@ -60,7 +60,7 @@ class UserController
     /**
      * Middleware to check authentication.
      */
-    public static function loggedIn($req, $res, $next)
+    public function loggedIn($req, $res, $next)
     {
         $authenticated = false; // Your authentication logic
 
